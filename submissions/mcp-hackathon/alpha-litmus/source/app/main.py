@@ -13,7 +13,7 @@ from pydantic import Field
 
 from app.audit import audit
 from app.certificates import verify_report
-from app.contracts import ChallengeRequest, Provenance, Report, StrictModel, Verification
+from app.contracts import ChallengeRequest, Provenance, ReleaseGateResult, Report, StrictModel, Verification
 from app.demo import fixture
 from app.lab import challenge
 from app.nexus_compute import WindowExperimentReport, WindowExperimentRequest
@@ -28,6 +28,7 @@ from app.transport import (
     nexus_enabled,
     nexus_evidence,
     run_challenge,
+    run_release_gate,
     run_window_compute,
 )
 
@@ -48,7 +49,8 @@ class Proof(Provenance):
 class Capabilities(StrictModel):
     name: Literal["AlphaLitmus"] = "AlphaLitmus"
     tools: list[str] = Field(default_factory=lambda: [
-        "challenge_nexus_strategy", "find_failure_boundary", "verify_failure_certificate", "get_demo_fixture",
+        "evaluate_strategy_release", "challenge_nexus_strategy", "find_failure_boundary",
+        "verify_failure_certificate", "get_demo_fixture",
         "run_nexus_window_stability",
     ])
     side_effects: list[Literal["opt_in_nexus_backtest_compute"]] = Field(
@@ -292,3 +294,17 @@ async def demo(scenario: str) -> Report:
     if scenario not in ("mixed", "shock"):
         raise HTTPException(404, "UNKNOWN_SCENARIO")
     return await compute(lambda: challenge(ChallengeRequest(research=fixture(scenario))))
+
+
+@app.post("/v1/release-gate", response_model=ReleaseGateResult)
+async def release_gate(request: ChallengeRequest) -> ReleaseGateResult:
+    """Evaluate a strategy release through the existing engine plus pure projection."""
+    return await run_release_gate(request)
+
+
+@app.get("/v1/release-gate/demo/{scenario}", response_model=ReleaseGateResult)
+async def release_gate_demo(scenario: str) -> ReleaseGateResult:
+    """Synthetic release-gate demo. Synthetic evidence stays INSUFFICIENT_EVIDENCE."""
+    if scenario not in ("mixed", "shock"):
+        raise HTTPException(404, "UNKNOWN_SCENARIO")
+    return await run_release_gate(ChallengeRequest(research=fixture(scenario)))

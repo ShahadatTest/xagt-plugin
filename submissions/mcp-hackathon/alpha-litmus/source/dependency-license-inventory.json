@@ -8,11 +8,11 @@
     "locks": [
       {
         "path": "requirements.txt",
-        "sha256": "11a8f6b2c49ba13f02e974fa219949b0d1d91746462e2d3a1e2bf9d11ba73927"
+        "sha256": "8df5ac441c4b3294893503b18a12ed49633c6280eed37525650abb7e8d8872ef"
       },
       {
         "path": "requirements-dev.txt",
-        "sha256": "32631a4778623a7a7315dfd86f73bf4c66bf1bcb2c39c77f60dde279d94c606a"
+        "sha256": "9f496f52db894a4b71d1a97b4e2ee7ba1c8dd7dab89731765f64f2465536f697"
       }
     ]
   },

@@ -283,3 +283,46 @@ class Verification(StrictModel):
     report_id: str | None = None
     errors: list[str]
     authenticity_verified: Literal[False] = False
+
+
+ReleaseDecision = Literal["BLOCK_DEPLOYMENT", "INSUFFICIENT_EVIDENCE", "SURVIVED_BOUNDED_TESTS"]
+ReleaseAction = Literal["DO_NOT_DEPLOY", "COLLECT_MORE_EVIDENCE", "CONTINUE_PAPER_VALIDATION"]
+
+
+class ReleaseGateResult(StrictModel):
+    """Machine-actionable projection of an authoritative Report.
+
+    This model never authorizes trading. It only restates the source verdict
+    as a bounded release-gate decision with deterministic ordering.
+    """
+
+    schema_version: Literal["alphalitmus-release-gate-1"] = "alphalitmus-release-gate-1"
+    decision: ReleaseDecision
+    recommended_action: ReleaseAction
+    source_verdict: Verdict
+    evidence_classification: EvidenceClassification
+    reason_codes: list[Reason] = Field(max_length=20)
+    observed_failures: list[Reason] = Field(max_length=20)
+    unavailable_tests: list[str] = Field(max_length=40)
+    report_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    canonical_report_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    no_execution: Literal[True] = True
+    profitability_claimed: Literal[False] = False
+    # Mandatory attestation: no default, so absence is never inferred as True.
+    # Identity-checked (`is True`), so 1/"true" cannot coerce to an attestation.
+    source_report_verified: Literal[True]
+    report: Report
+
+    @field_validator("source_report_verified", mode="before")
+    @classmethod
+    def verified_must_be_exact_true(cls, value: object) -> object:
+        if value is not True:
+            raise ValueError("source_report_verified must be exactly true")
+        return value
+    disclaimer: Literal[
+        "This result is not financial advice and is not deployment approval. "
+        "SURVIVED_BOUNDED_TESTS means only survival of the stated bounded tests."
+    ] = (
+        "This result is not financial advice and is not deployment approval. "
+        "SURVIVED_BOUNDED_TESTS means only survival of the stated bounded tests."
+    )

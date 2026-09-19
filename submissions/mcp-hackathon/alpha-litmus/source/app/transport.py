@@ -21,9 +21,10 @@ from pydantic import Field
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from app.contracts import ChallengeRequest, Report, StrictModel
+from app.contracts import ChallengeRequest, ReleaseGateResult, Report, StrictModel
 from app.lab import challenge
 from app.nexus import read_nexus
+from app.release_gate import project
 from app.nexus_compute import (
     NexusComputeError, WindowEvidence, WindowExperimentReport, WindowExperimentRequest, run_window_experiment,
 )
@@ -220,6 +221,21 @@ async def run_challenge(request: ChallengeRequest) -> Report:
     async with admission.slot():
         evidence = await nexus_evidence(request.symbol) if request.mode == "nexus" else None
         return await anyio.to_thread.run_sync(lambda: challenge(request, evidence), abandon_on_cancel=False)
+
+
+async def run_release_gate(request: ChallengeRequest) -> ReleaseGateResult:
+    """Run the existing analysis engine, then apply the pure release-gate projection.
+
+    Single-admission path shared by REST and MCP so both use the same engine
+    and decision mapping with no parallel implementation.
+    """
+    async with admission.slot():
+        evidence = await nexus_evidence(request.symbol) if request.mode == "nexus" else None
+
+        def _evaluate() -> ReleaseGateResult:
+            return project(challenge(request, evidence))
+
+        return await anyio.to_thread.run_sync(_evaluate, abandon_on_cancel=False)
 
 
 async def run_window_compute(request: WindowExperimentRequest) -> WindowExperimentReport:

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23050807'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-9H25l-3 9Zm16-18h7l-3.5-10Z' fill='%233bf58f'/%3E%3C/svg%3E">
-  <title>AlphaLitmus by SKLab | Strategy Challenge</title>
+  <title>AlphaLitmus by SKLab | Strategy Release Gate for Agents</title>
   <style>
     /* Operational subset of hacker-ui tokens; local fonts and no motion. */
     :root{--bg:#050807;--surface:#0A100D;--surface-2:#0D1611;--line:#16241C;--text:#C6E8D5;--muted:#6B8A79;--phos:#3BF58F;--phos-dim:#1E8A55;--warn:#FFB000;--alert:#FF4D4D;--mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color-scheme:dark}
@@ -17,25 +17,29 @@
     @media(max-width:900px){.viz-grid{grid-template-columns:1fr 1fr}.viz:last-child{grid-column:1/-1}.overview__metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview__metric:nth-child(2){border-right:0}.overview__metric:nth-child(-n+2){border-bottom:1px solid var(--line)}}
     @media(max-width:640px){header,main,footer{padding:12px}header{flex-direction:column;align-items:flex-start}.powered{align-self:flex-start;text-align:left}.brand{font-size:18px}.hero{padding:26px 0 20px}.hero h1{font-size:clamp(30px,10vw,42px);overflow-wrap:anywhere}.hero__copy{overflow-wrap:anywhere}.hero__steps{display:grid;gap:7px}.grid{grid-template-columns:minmax(0,1fr)}.wide{grid-column:auto}.term__body,.panel{padding:12px}.toolbar{display:grid;grid-template-columns:minmax(0,1fr);width:100%}.toolbar .btn,.toolbar>a,.toolbar input{width:100%;min-width:0;text-align:center}.overview{padding:0}.overview__head{grid-template-columns:minmax(0,1fr);padding:16px}.overview__verdict{font-size:36px}.verdict-chip{justify-self:start;white-space:normal}.overview__metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.overview__metric{padding:12px}.overview__metric strong{font-size:15px}.viz-grid{grid-template-columns:minmax(0,1fr)}.viz:last-child{grid-column:auto}.viz{padding:14px}.report-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}.report-nav__label{grid-column:1/-1}.report-nav a{overflow-wrap:anywhere}.table th,.table td{padding:8px}.notice{padding:11px 12px}.bar-row{grid-template-columns:66px minmax(70px,1fr) 56px}pre{max-width:100%}}
     @media(prefers-reduced-motion:no-preference){.btn,.panel{transition:border-color .16s ease,background .16s ease,transform .16s ease}.btn:hover:not(:disabled){transform:translateY(-1px)}}
+    /* Release-gate judge-first layer: decision first, evidence below. No motion, no hype. */
+    #gate{margin:0 0 16px}#when,#agent-examples{margin:0 0 16px}.gate__body{padding:22px;min-width:0}.gate__body h3{margin:18px 0 8px}.gate__body h3:first-child{margin-top:0}.gate__body ul{margin:0 0 12px;padding-left:22px;overflow-wrap:anywhere}.gate__body li{margin-bottom:4px;overflow-wrap:anywhere}.gate__ids{margin:0 0 12px;display:grid;gap:8px}.gate__ids div{display:grid;grid-template-columns:160px minmax(0,1fr);gap:12px}.gate__ids dt{color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.gate__ids dd{margin:0;overflow-wrap:anywhere;word-break:break-all}.warn{color:var(--warn)}.gate__body pre,#agent-examples pre,#usage pre{max-width:100%;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}code{overflow-wrap:anywhere}
+    @media(max-width:640px){.gate__body{padding:12px}.gate__ids div{grid-template-columns:minmax(0,1fr)}}
   </style>
 </head>
 <body>
-  <a class="skip" href="#report">Skip to report</a>
+  <a class="skip" href="#gate">Skip to release decision</a>
   <header><div class="header__brand"><div class="mark" aria-hidden="true">A</div><div class="brand">AlphaLitmus <span class="byline">by SKLab</span></div></div><div class="powered">Powered by <strong>OlaXBT Nexus</strong></div></header>
   <main>
     <div class="hero">
-      <div class="eyebrow">Strategy challenge / judge workspace</div>
-      <h1>Break the strategy before the market does.</h1>
-      <p class="hero__copy">Falsify a trading strategy before capital is at risk. Recompute its claims, stress its assumptions and export a tamper-evident failure certificate. Reference replay is not validation of a Nexus-bound strategy.</p>
+      <div class="eyebrow">AlphaLitmus · Strategy Release Gate for Agents</div>
+      <h1>Strategy Release Gate for Agents</h1>
+      <p class="hero__copy">Test a strategy before an agent deploys or scales it. AlphaLitmus finds bounded cost, delay, regime, parameter, and evidence failures—then returns a reproducible decision.</p>
       <div class="tag" aria-label="Safety constraints"><span>Paper research</span><span>No order execution</span><span>No wallet</span></div>
-      <ol class="hero__steps" aria-label="Challenge workflow"><li><span>01</span>Run a bounded challenge</li><li><span>02</span>Inspect failure evidence</li><li><span>03</span>Export the exact report</li></ol>
+      <ol class="hero__steps" aria-label="Release-gate workflow"><li><span>01</span>Run safe release-gate demo</li><li><span>02</span>Read the release decision first</li><li><span>03</span>Export reproducible evidence</li></ol>
     </div>
     <section class="term" aria-labelledby="controls-title">
-      <div class="term__bar" id="controls-title">INPUT://CHALLENGE</div>
+      <div class="term__bar" id="controls-title">INPUT://RELEASE-GATE</div>
       <div class="term__body">
         <div class="toolbar">
-          <button class="btn btn--primary" id="mixed" type="button">[ Run judge demo ]</button>
+          <button class="btn btn--primary" id="mixed" type="button">Run safe release-gate demo</button>
           <button class="btn" id="shock" type="button">[ Run shock test ]</button>
+          <button class="btn" id="copy" type="button" disabled>[ Copy JSON ]</button>
           <button class="btn" id="download" type="button" disabled>[ Export report JSON ]</button>
           <a href="/docs">REST API docs</a>
         </div>
@@ -64,6 +68,65 @@
     <div id="status" class="status" role="status" aria-live="polite">Awaiting report.</div>
     <div id="error" class="notice error" role="alert" hidden></div>
     <div id="notice" class="notice">SYNTHETIC DEMO / Generated prices are application test data, never evidence of live performance or a profitable edge.</div>
+    <section class="panel overview" id="gate" aria-labelledby="gate-title" tabindex="-1">
+      <div class="overview__head">
+        <div><div class="overview__label" id="gate-title">1 / Release decision (read first)</div><div class="overview__verdict" id="gate-decision">AWAITING DECISION</div><p class="overview__reason" id="gate-action">Run the safe release-gate demo to generate a bounded, reproducible decision.</p></div>
+        <div class="verdict-chip" id="gate-source">Source unavailable</div>
+      </div>
+      <div class="overview__metrics" id="gate-metrics"></div>
+      <div class="gate__body">
+        <h3>Why this decision</h3>
+        <p id="gate-why">Awaiting current release-gate result.</p>
+        <h3>Observed failures</h3>
+        <ul id="gate-failures"><li>Awaiting current result; no failures shown yet.</li></ul>
+        <h3>Unavailable evidence</h3>
+        <ul id="gate-unavailable"><li>Awaiting current result.</li></ul>
+        <h3>Report identity</h3>
+        <dl class="gate__ids">
+          <div><dt>Report ID</dt><dd id="gate-report-id">Unavailable</dd></div>
+          <div><dt>Canonical hash</dt><dd id="gate-hash">Unavailable</dd></div>
+        </dl>
+        <p id="gate-synthetic" class="warn">Public synthetic demo: decision is INSUFFICIENT_EVIDENCE. Synthetic evidence cannot approve or reject a real production strategy. Observed failures remain visible; more authentic evidence is required.</p>
+        <p id="gate-disclaimer" class="muted">This result is not financial advice and is not deployment approval.</p>
+        <div class="toolbar">
+          <button class="btn" id="copy-inline" type="button" disabled>Copy JSON</button>
+          <button class="btn" id="download-inline" type="button" disabled>Download JSON</button>
+        </div>
+        <details><summary>Inspect complete release-gate JSON</summary><pre id="raw-gate" tabindex="0">Unavailable / no current result.</pre></details>
+      </div>
+    </section>
+    <section class="panel" id="when" aria-labelledby="when-title">
+      <h2 id="when-title">When should an agent call this?</h2>
+      <ul>
+        <li>before enabling a strategy</li>
+        <li>after changing strategy configuration</li>
+        <li>before increasing risk or scale</li>
+        <li>after a market-regime change</li>
+        <li>during scheduled strategy revalidation</li>
+      </ul>
+    </section>
+    <section class="panel wide" id="agent-examples" aria-labelledby="agent-examples-title">
+      <h2 id="agent-examples-title">Agent call contract / copyable examples</h2>
+      <h3>REST call</h3>
+      <pre tabindex="0">POST /v1/release-gate
+Content-Type: application/json
+
+{"mode":"nexus","symbol":"BTC/USDT"}</pre>
+      <h3>MCP tool arguments</h3>
+      <pre tabindex="0">{"name":"evaluate_strategy_release","arguments":{"request":{"mode":"nexus","symbol":"BTC/USDT"}}}</pre>
+      <h3>Expected decision fields</h3>
+      <pre tabindex="0">{
+  "schema_version": "alphalitmus-release-gate-1",
+  "decision": "BLOCK_DEPLOYMENT | INSUFFICIENT_EVIDENCE | SURVIVED_BOUNDED_TESTS",
+  "recommended_action": "DO_NOT_DEPLOY | COLLECT_MORE_EVIDENCE | CONTINUE_PAPER_VALIDATION",
+  "source_verdict": "FRAGILE | INCONSISTENT | UNPROVEN | SURVIVED_TESTS",
+  "report_id": "&lt;64-hex&gt;",
+  "canonical_report_hash": "&lt;64-hex&gt;",
+  "no_execution": true,
+  "profitability_claimed": false
+}</pre>
+      <p class="muted">Primary MCP tool: <code>evaluate_strategy_release</code>. Existing tools remain available. SURVIVED_BOUNDED_TESTS means only survival of the stated bounded tests, not deployment approval.</p>
+    </section>
     <section class="panel overview" id="overview" aria-labelledby="overview-title">
       <div class="overview__head">
         <div><div class="overview__label" id="overview-title">Current falsification result</div><div class="overview__verdict" id="overview-verdict">AWAITING REPORT</div><p class="overview__reason" id="overview-reason">Run the judge demo to generate a bounded, evidence-labeled result.</p></div>
@@ -96,18 +159,23 @@
         <p>Export is enabled only for the latest successful Report. Starting any new request clears the previous report and disables export. The JSON includes the submitted request and may contain your dataset; review before sharing.</p>
         <details><summary>Inspect complete current Report JSON</summary><pre id="raw-report" tabindex="0">Unavailable / no current report.</pre></details>
         <h3>REST / same-origin service</h3>
-        <pre tabindex="0">GET /v1/demo/mixed
-GET /v1/demo/shock
-POST /v1/challenge
+        <pre tabindex="0">GET /v1/release-gate/demo/mixed
+GET /v1/release-gate/demo/shock
+POST /v1/release-gate
 Content-Type: application/json
 
 {"mode":"nexus","symbol":"BTC/USDT"}
 
-# Submit a reference ChallengeRequest saved locally:
-curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/json" --data-binary @challenge.json</pre>
+# Primary release-gate call (same ChallengeRequest as /v1/challenge):
+curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application/json" --data-binary @challenge.json
+
+# Legacy detail routes remain available:
+# GET /v1/demo/mixed, GET /v1/demo/shock, POST /v1/challenge</pre>
         <h3>MCP / local stdio</h3>
-        <pre tabindex="0">python -m app.mcp_server</pre>
-        <p>Connect your MCP client to that local command, run <code>tools/list</code>, and use the advertised tool schema. Tool names and availability depend on the running server version. MCP connectivity has not been checked by this page.</p>
+        <pre tabindex="0">python -m app.mcp_server
+# Primary tool:
+# {"name":"evaluate_strategy_release","arguments":{"request":{"mode":"nexus","symbol":"BTC/USDT"}}}</pre>
+        <p>Connect your MCP client to that local command, run <code>tools/list</code>, and use the advertised tool schema. Primary tool is <code>evaluate_strategy_release</code>; the existing five tools remain available. MCP connectivity has not been checked by this page.</p>
         <p>All page assets are local. Demo and import requests go to this origin; explicit Nexus mode may cause the server to contact Nexus. Opening this HTML as a file is not sufficient: serve it through the application.</p>
       </section>
     </div>
@@ -119,9 +187,11 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
     const $ = id => document.getElementById(id);
     const unavailable = 'Unavailable / not supplied by this report.';
     const sections = ['strategy', 'verdict', 'metrics', 'claims', 'stress', 'frontier', 'boundary', 'certificate', 'provenance', 'limitations'];
+    let gate = null;
     let report = null;
     let sequence = 0;
     let controller = null;
+    const GATE_DECISIONS = ['BLOCK_DEPLOYMENT', 'INSUFFICIENT_EVIDENCE', 'SURVIVED_BOUNDED_TESTS'];
     const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
     const list = value => Array.isArray(value) ? value : [];
     const text = value => value === null || value === undefined ? unavailable : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
@@ -235,9 +305,59 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
         parent.append(cell);
       });
     }
+    function setGateButtons(enabled) {
+      ['copy', 'copy-inline', 'download', 'download-inline'].forEach(id => { const node = $(id); if (node) node.disabled = !enabled; });
+    }
+    function clearGate(message) {
+      gate = null;
+      $('gate-decision').textContent = 'AWAITING DECISION';
+      $('gate-action').textContent = message;
+      $('gate-source').textContent = 'Source unavailable';
+      $('gate-why').textContent = message;
+      $('gate-failures').replaceChildren(element('li', message));
+      $('gate-unavailable').replaceChildren(element('li', message));
+      $('gate-report-id').textContent = 'Unavailable';
+      $('gate-hash').textContent = 'Unavailable';
+      $('raw-gate').textContent = message;
+      const metrics = $('gate-metrics');
+      if (metrics) metrics.replaceChildren();
+    }
+    function renderGate(g) {
+      $('gate-decision').textContent = g.decision;
+      $('gate-action').textContent = 'Recommended action: ' + g.recommended_action + ' / Source verdict: ' + g.source_verdict;
+      $('gate-source').textContent = 'Source: ' + g.source_verdict + ' / ' + g.evidence_classification;
+      const reasons = list(g.reason_codes);
+      $('gate-why').textContent = (reasons[0] || 'No explicit reason was returned; this is not proof of an edge.') + ' / ' + (g.disclaimer || 'This result is not financial advice and is not deployment approval.');
+      const failures = list(g.observed_failures);
+      $('gate-failures').replaceChildren();
+      if (!failures.length) $('gate-failures').append(element('li', 'No observed failures reported; this is not proof of an edge.'));
+      else failures.forEach(value => $('gate-failures').append(element('li', value)));
+      const missing = list(g.unavailable_tests);
+      $('gate-unavailable').replaceChildren();
+      if (!missing.length) $('gate-unavailable').append(element('li', 'No unavailable tests reported.'));
+      else missing.forEach(value => $('gate-unavailable').append(element('li', value)));
+      $('gate-report-id').textContent = g.report_id || unavailable;
+      $('gate-hash').textContent = g.canonical_report_hash || unavailable;
+      $('gate-disclaimer').textContent = g.disclaimer || 'This result is not financial advice and is not deployment approval.';
+      const synthetic = g.evidence_classification === 'synthetic_reference' || reasons.includes('SYNTHETIC_DATA_NOT_PROFIT_EVIDENCE');
+      $('gate-synthetic').textContent = synthetic
+        ? 'Public synthetic demo: decision is ' + g.decision + '. Synthetic evidence cannot approve or reject a real production strategy. Observed failures remain visible; more authentic evidence is required.'
+        : 'Evidence classification: ' + (g.evidence_classification || 'unavailable') + '. This result is not financial advice and is not deployment approval.';
+      $('raw-gate').textContent = JSON.stringify(g, null, 2);
+      const metrics = $('gate-metrics');
+      if (metrics) {
+        metrics.replaceChildren();
+        [['Decision', g.decision], ['Action', g.recommended_action], ['Source', g.source_verdict], ['Evidence', g.evidence_classification]].forEach(([label, value]) => {
+          const metric = element('div', undefined, 'overview__metric');
+          metric.append(element('span', label), element('strong', value));
+          metrics.append(metric);
+        });
+      }
+    }
     function clearReport(message) {
       report = null;
-      $('download').disabled = true;
+      setGateButtons(false);
+      clearGate(message);
       sections.forEach(id => body(id).replaceChildren(element('p', message, 'empty')));
       $('raw-report').textContent = message;
       $('overview-verdict').textContent = 'AWAITING REPORT';
@@ -348,12 +468,13 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
       controller?.abort();
       const active = new AbortController();
       controller = active;
-      clearReport('Unavailable / new request in progress. Previous report cleared.');
+      clearReport('Unavailable / new request in progress. Previous result cleared.');
       $('error').hidden = true;
       $('error').textContent = '';
       $('status').textContent = 'REQUESTING / ' + label;
-      $('notice').textContent = url.startsWith('/v1/demo/') ? 'SYNTHETIC DEMO / Requesting generated test data, not live performance.' : 'PENDING / Evidence kind will be labeled from the returned Report. No live performance is asserted.';
+      $('notice').textContent = url.includes('/release-gate/demo/') ? 'SYNTHETIC DEMO / Requesting generated test data, not live performance.' : 'PENDING / Evidence kind will be labeled from the returned result. No live performance is asserted.';
       $('report').setAttribute('aria-busy', 'true');
+      $('gate').setAttribute('aria-busy', 'true');
       let timedOut = false;
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
       try {
@@ -366,23 +487,33 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
         try { result = JSON.parse(raw); }
         catch { throw new Error('HTTP ' + response.status + ': server returned non-JSON content. Check the application server and route.'); }
         if (!response.ok) throw new Error('HTTP ' + response.status + ': ' + text(result?.detail ?? result).slice(0, 6000));
-        if (!object(result) || !object(result.request) || typeof result.report_id !== 'string' || typeof result.schema_version !== 'string' || !['UNPROVEN', 'FRAGILE', 'SURVIVED_TESTS', 'INCONSISTENT'].includes(result.verdict) || !['reference', 'nexus'].includes(result.mode)) {
-          throw new Error('Response is not the current AlphaLitmus Report contract. Check that the server exposes the new /v1/challenge and demo Report routes.');
+        if (!object(result) || !GATE_DECISIONS.includes(result.decision) || !object(result.report) || typeof result.report_id !== 'string' || result.schema_version !== 'alphalitmus-release-gate-1') {
+          throw new Error('Response is not the current release-gate contract. Check that the server exposes /v1/release-gate routes.');
         }
-        render(result);
-        report = result;
-        $('download').disabled = false;
-        $('status').textContent = 'REPORT READY / ' + label + ' / ' + result.verdict;
+        // Verification attestation must be exactly true; absence is never inferred.
+        if (result.source_report_verified !== true) {
+          throw new Error('CONTRACT VALIDATION FAILED / source_report_verified must be exactly true. No decision is displayed or exported.');
+        }
+        const inner = result.report;
+        if (!object(inner) || !object(inner.request) || typeof inner.report_id !== 'string' || !['UNPROVEN', 'FRAGILE', 'SURVIVED_TESTS', 'INCONSISTENT'].includes(inner.verdict)) {
+          throw new Error('Embedded report is not the current AlphaLitmus Report contract.');
+        }
+        renderGate(result);
+        render(inner);
+        gate = result;
+        report = inner;
+        setGateButtons(true);
+        $('status').textContent = 'DECISION READY / ' + label + ' / ' + result.decision;
       } catch (error) {
         if (current !== sequence) return;
-        clearReport('Unavailable / request failed. No current report to export.');
+        clearReport('Unavailable / request failed. No current result to export.');
         $('notice').textContent = 'NO CURRENT EVIDENCE / Request failed. No previous results are retained or presented as current.';
         $('error').textContent = 'REQUEST FAILED / ' + (timedOut ? 'Timed out after 120 seconds. Retry or inspect the server.' : error.message || String(error));
         $('error').hidden = false;
         $('status').textContent = 'REQUEST FAILED / ' + label + ' / export disabled';
       } finally {
         clearTimeout(timeout);
-        if (current === sequence) { $('report').setAttribute('aria-busy', 'false'); controller = null; }
+        if (current === sequence) { $('report').setAttribute('aria-busy', 'false'); $('gate').setAttribute('aria-busy', 'false'); controller = null; }
       }
     }
     function parseRequest(raw) {
@@ -392,13 +523,13 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
       if (!object(value)) throw new Error('ChallengeRequest must be a JSON object.');
       return value;
     }
-    $('mixed').addEventListener('click', () => load('/v1/demo/mixed', null, 'synthetic mixed demo'));
-    $('shock').addEventListener('click', () => load('/v1/demo/shock', null, 'synthetic shock demo'));
+    $('mixed').addEventListener('click', () => load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed'));
+    $('shock').addEventListener('click', () => load('/v1/release-gate/demo/shock', null, 'safe release-gate demo / shock'));
     $('file').addEventListener('change', event => {
       const file = event.target.files[0];
       event.target.value = '';
       if (!file) return;
-      load('/v1/challenge', async () => {
+      load('/v1/release-gate', async () => {
         if (file.size > 2000000) throw new Error('Maximum import size is 2 MB.');
         return parseRequest(await file.text());
       }, 'imported ChallengeRequest');
@@ -406,26 +537,46 @@ curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/js
     $('import-form').addEventListener('submit', event => {
       event.preventDefault();
       const raw = $('request-json').value;
-      load('/v1/challenge', () => parseRequest(raw), 'pasted ChallengeRequest');
+      load('/v1/release-gate', () => parseRequest(raw), 'pasted ChallengeRequest');
     });
     $('nexus-form').addEventListener('submit', event => {
       event.preventDefault();
       const symbol = $('symbol').value;
-      load('/v1/challenge', () => ({mode: 'nexus', symbol}), 'Nexus evidence / mode: nexus');
+      load('/v1/release-gate', () => ({mode: 'nexus', symbol}), 'Nexus evidence / mode: nexus');
     });
-    $('download').addEventListener('click', () => {
-      if (!report) return;
-      const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'}));
+    function downloadGate() {
+      if (!gate || gate.source_report_verified !== true) return;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(gate, null, 2)], {type: 'application/json'}));
       const link = element('a');
       link.href = url;
-      link.download = 'alphalitmus-' + report.report_id.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) + '.json';
+      link.download = 'alphalitmus-release-gate-' + String(gate.report_id || 'report').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) + '.json';
       document.body.append(link);
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-    });
-    clearReport('Unavailable / awaiting current Report.');
-    load('/v1/demo/mixed', null, 'synthetic mixed demo');
+    }
+    async function copyGate() {
+      if (!gate || gate.source_report_verified !== true) return;
+      const payload = JSON.stringify(gate, null, 2);
+      try {
+        await navigator.clipboard.writeText(payload);
+        $('status').textContent = 'COPIED / release-gate JSON copied to clipboard.';
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = payload;
+        document.body.append(area);
+        area.select();
+        try { document.execCommand('copy'); $('status').textContent = 'COPIED / release-gate JSON copied to clipboard.'; }
+        catch { $('status').textContent = 'COPY FAILED / clipboard unavailable; use Download JSON.'; }
+        area.remove();
+      }
+    }
+    $('download').addEventListener('click', downloadGate);
+    $('download-inline').addEventListener('click', downloadGate);
+    $('copy').addEventListener('click', copyGate);
+    $('copy-inline').addEventListener('click', copyGate);
+    clearReport('Unavailable / awaiting current release-gate result.');
+    load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed');
   </script>
 </body>
 </html>

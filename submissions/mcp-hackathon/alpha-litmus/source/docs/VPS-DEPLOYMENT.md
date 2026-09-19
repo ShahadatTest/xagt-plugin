@@ -1,8 +1,9 @@
 # VPS Deployment Evidence
 
-Recorded on **2026-09-19**. This document separates the reproducible pre-commit
-deployment evidence from the final review-commit binding. The public endpoints,
-not a copied value in this file, are authoritative for the active commit.
+Recorded on **2026-09-19**. This document retains the reproducible pre-commit
+deployment evidence and records the completed review-commit binding. The public
+endpoints, not a copied value in this file, are authoritative for the active
+commit.
 
 ## Executed deployment
 
@@ -61,12 +62,23 @@ measured document and body scroll widths equal to the viewport, exercised the
 shock-demo transition, rendered all three visualizations and observed no page
 errors.
 
-The final review release is built from `git archive` of the exact review commit,
-uses an immutable `/opt/alphalitmus-release-<short-commit>` directory, and runs
-with `ALPHALITMUS_ENV=production` plus the full commit build argument. Verify the
-active binding directly at `/health` and
-`/.well-known/xagent-verification.json`; both must expose the same 40-character
-commit before online validation.
+The final review release was built from `git archive` of the exact public review
+commit, uses an immutable `/opt/alphalitmus-release-<short-commit>` directory,
+and runs with `ALPHALITMUS_ENV=production` plus the full commit build argument.
+The archive SHA-256 matched before extraction. A canary passed health through
+the private Caddy network before traffic switched. The active container and
+symlink were then updated, while the previous release/image were retained for
+rollback. `/health` and `/.well-known/xagent-verification.json` exposed the same
+40-character public commit; capabilities reported six tools with
+`evaluate_strategy_release` first. Public mixed-demo and safe Nexus-disabled
+release-gate calls returned verified `INSUFFICIENT_EVIDENCE`, never a fabricated
+success.
+
+The redesigned live UI also received a current Chromium pass at desktop and
+390×844 mobile viewports. Mixed auto-load and shock interaction completed,
+Copy/Download enabled only after a result, no document-level horizontal overflow
+appeared, and no application console warning/error was observed. This is not a
+formal accessibility or cross-browser certification.
 
 This remains a public **safe-mode** deployment, not a live Nexus deployment.
 `no_execution` stays true, Nexus reads and remote compute remain disabled, and no

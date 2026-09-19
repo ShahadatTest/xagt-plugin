@@ -27,17 +27,17 @@ The inspected tooling is Ruff 0.16.6 and mypy 1.20.2. Runtime and development de
 
 ## Required Acceptance Checks
 
-Final local gates, Python 3.12.10:
+Final local gates, Python 3.12.10, after the release-gate hardening:
 
 ```text
 python -m pytest -q
-562 passed, 1 warning in 50.12s
+614 passed, 1 warning in 76.82s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 15 source files
+Success: no issues found in 16 source files
 
 python -m pip check
 No broken requirements found.
@@ -46,33 +46,35 @@ python tools/secret_scan.py
 (exit 0, no findings)
 
 python -m tools.local_smoke
-(exit 0; 5 MCP tools; REST/MCP hash-equivalent UNPROVEN synthetic report)
+(exit 0; 6 MCP tools including primary evaluate_strategy_release; REST/MCP hash-equivalent UNPROVEN synthetic report)
 ```
 
-There were zero failures and zero skips. The warning is Starlette's use of AnyIO's deprecated BlockingPortal alias; it is not suppressed. Quantitative unchanged-fixture results are recorded in [DEMO](DEMO.md). Full smoke evidence and its reproduction command are in [LOCAL-VERIFICATION](LOCAL-VERIFICATION.md).
+The release-gate upgrade adds `POST /v1/release-gate`, `GET /v1/release-gate/demo/{mixed,shock}`, MCP `evaluate_strategy_release` (primary, `readOnlyHint=true`), and the `app/release_gate.py` projection. Successful gate results are only issued from a source certificate accepted by the existing `verify_report` (`source_report_verified:true`); invalid sources fail closed with sanitized `REPORT_VERIFICATION_FAILED`. Verification replays the bounded reference/reconciliation calculations, so a gate call costs roughly one challenge plus one verification replay. Existing five tools and report verification remain authoritative and backward compatible. Synthetic demos remain `INSUFFICIENT_EVIDENCE`; `SURVIVED_BOUNDED_TESTS` is not deployment approval. See [agent call contract](AGENT-CALL-CONTRACT.md).
+
+There were zero failures and zero skips in the final run. The warning is Starlette's use of AnyIO's deprecated BlockingPortal alias; it is not suppressed. Quantitative unchanged-fixture results recorded 2026-09-19 are historical and kept in [DEMO](DEMO.md). Full smoke evidence and its reproduction command are in [LOCAL-VERIFICATION](LOCAL-VERIFICATION.md). Smoke verifier artifacts are written only under the run's temporary directory, so a fresh clone with no ignored `reports/` directory passes.
 
 `python -m pip_audit -r requirements.txt` is unavailable in the application environment (`No module named pip_audit`). The isolated release tooling environment (`tools/__pycache__/release-venv`, pip-audit 2.10.1) reported **no known vulnerabilities** for `requirements.txt`. That audit queries vulnerability services for locked third-party packages only; it is not a Nexus, deployment, or application-security certification.
 
 Local health service and proof slug both returned `alpha-litmus`. The source reads only `ALPHALITMUS_COMMIT`, without a legacy fallback. Development reported `local-dev`, not an actual public review commit. Body handling is capped at 4,000,000 bytes, eight intake slots, a 10-second body deadline and two compute slots per process; `GET /health` bypasses upload intake and compute admission and never waits for body input.
 
-A real local MCP stdio subprocess client discovered all five tools and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
+A real local MCP stdio subprocess client discovered all six tools (including primary `evaluate_strategy_release`) and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
 
-A real Chrome pass on 2026-09-19 rendered the dashboard, exercised the mixed-to-shock demo transition, checked the semantic control/table structure, and verified a 390px viewport without document-level horizontal overflow. No application-origin console errors were observed. This is a bounded visual/responsive review, not formal accessibility conformance or broad cross-browser coverage.
+A current Chromium pass on 2026-09-19 exercised the redesigned gate-first dashboard over public HTTPS. The mixed demo auto-loaded, the shock transition reached `INSUFFICIENT_EVIDENCE` with `COLLECT_MORE_EVIDENCE`, Copy/Download controls enabled only after a verified result, desktop and 390×844 mobile layouts had no document-level horizontal overflow, and no application console warning/error was observed. Static/TestClient and Node syntax checks remain in place. This is not formal accessibility conformance or broad cross-browser coverage.
 
 The Windows Docker daemon remained unavailable, but the authorized target Linux
 VPS subsequently built the image from the same Dockerfile and hash-locked runtime
 requirements. The resulting container passed health as UID 10001 with a read-only
 root filesystem, dropped capabilities, no-new-privileges, explicit resource
 limits and no host port. Nexus remained disabled and no key was deployed. See
-[VPS deployment](VPS-DEPLOYMENT.md). Public DNS/TLS are verified there; only
-final reviewed-commit binding remains pending.
+[VPS deployment](VPS-DEPLOYMENT.md). Public DNS/TLS and the final public
+reviewed-commit binding are verified there.
 
 - [x] Final source imports, tests, lint and strict types pass with recorded exact commands/environment.
-- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and five tool names.
+- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and six tool names (primary `evaluate_strategy_release` plus the existing five).
 - [x] Synthetic examples cannot receive an eligible survival verdict; missing Nexus evidence remains unproven.
 - [x] A certificate verifies offline; both an ordinary tamper and a rehashed inconsistent analysis fail verification.
 - [x] Provenance contract enforced: reviewable requires nonzero lowercase 40-hex, unreviewable permits only `local-dev`; the rehashed `abc123` claim is rejected by generation, REST, MCP, and the offline verifier.
-- [ ] Production provenance rejects missing/invalid commit configuration; health and proof match an actual public reviewed commit.
+- [x] Production provenance rejects missing/invalid commit configuration; health and proof match the actual public reviewed commit.
 - [x] A real named Nexus strategy completed one Studio backtest and was left stopped; its negative metrics and limitations are recorded without a profitability claim.
 - [x] With explicit authorization and an in-memory strategy-bound key, AlphaLitmus consumed all four read-only Nexus MCP evidence surfaces and correctly returned `INCONSISTENT` for a cross-instrument trade mismatch. The default remains disabled and secret-free.
 - [ ] The live window-compute path has not run. It retains its separate switch and per-request confirmation and is not required for the read-only reconciliation above.
@@ -81,10 +83,10 @@ final reviewed-commit binding remains pending.
 - [ ] Caller authentication, per-principal quotas and retention controls are exercised before enabling live Nexus access or remote compute.
 - [ ] Actual source/data/branding/dependency rights and official submission artifacts are completed by authorized owners.
 
-The healthy container is publicly reachable through verified HTTPS in safe mode.
-Final commit binding, official validator result, registration proof and rights
-clearance remain pending. No Git initialization, commit, push or submission is
-inferred. Legacy negative reports stay unchanged and labeled as described in
+The healthy container is publicly reachable through verified HTTPS in safe mode
+and bound to the public source commit. Official validator result, registration
+proof, submission and rights clearance remain pending. Legacy negative reports
+stay unchanged and labeled as described in
 [BASELINE](BASELINE.md).
 
 ## Remaining Limits
@@ -94,4 +96,4 @@ inferred. Legacy negative reports stay unchanged and labeled as described in
 - No PSR, deflated Sharpe or selection-adjusted significance. Caller-declared variant counts do not repair selection bias; IID bootstrap and the 30-trade floor do not establish independence or future profit.
 - No global multidimensional failure minimum. Cost/delay/EMA results are bounded grids and per-dimension discoveries, not a search over all joint perturbations.
 - No selective sample exclusion to improve a result. Any out-of-domain bootstrap draw makes all bootstrap quantiles unavailable while other analyses remain; any replay cumulative or individual trade log return outside [-100,100] makes the entire reference analysis unavailable. Missing profit factors are never treated as passes, and later observed failures remain visible without a false bracket.
-- No public source repository, official validator result, registration proof or final rights clearance yet. The public safe-mode deployment is intentionally unauthenticated because Nexus and remote compute are disabled; those capabilities must not be enabled without authentication and quotas.
+- The public source repository and matching safe-mode deployment exist, but there is no official validator result, registration proof, submission acceptance or final rights clearance yet. The public safe-mode deployment is intentionally unauthenticated because Nexus and remote compute are disabled; those capabilities must not be enabled without authentication and quotas.

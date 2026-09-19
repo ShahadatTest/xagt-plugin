@@ -58,8 +58,9 @@ async def check_mcp(report: Report, env: dict[str, str], temporary: Path) -> dic
                     await session.initialize()
                     tools = await session.list_tools()
                     names = sorted(tool.name for tool in tools.tools)
-                    assert len(names) == 5
+                    assert len(names) == 6
                     assert set(names) == set(mcp_server.ARGUMENTS)
+                    assert "evaluate_strategy_release" in names
                     for tool in tools.tools:
                         assert tool.annotations is not None
                         assert tool.annotations.readOnlyHint == (tool.name != "run_nexus_window_stability")
@@ -164,7 +165,9 @@ def run_smoke() -> dict[str, object]:
                 for label, value, expected in (
                     ("synthetic", report, 0), ("tampered", tamper_report(report), 1),
                 ):
-                    path = ROOT / "reports" / f"alphalitmus-{label}-report.json"
+                    # Smoke-only artifacts stay under the temporary directory so a
+                    # fresh clone with no ignored reports/ directory still passes.
+                    path = temporary / f"alphalitmus-{label}-report.json"
                     path.write_text(value.model_dump_json(indent=2) + "\n", encoding="utf-8")
                     result = subprocess.run(
                         [sys.executable, "-B", "-m", "app.verify", str(path)],

@@ -36,7 +36,12 @@ def test_dashboard_health_proof(client: TestClient) -> None:
 
 def test_capabilities(client: TestClient) -> None:
     data = client.get("/v1/capabilities").json()
-    assert len(data["tools"]) == 5
+    assert len(data["tools"]) == 6
+    assert data["tools"][0] == "evaluate_strategy_release"
+    assert set(data["tools"]) == {
+        "evaluate_strategy_release", "challenge_nexus_strategy", "find_failure_boundary",
+        "verify_failure_certificate", "get_demo_fixture", "run_nexus_window_stability",
+    }
     assert data["side_effects"] == ["opt_in_nexus_backtest_compute"]
     assert data["nexus_enabled"] is False
     assert "reverse proxy" in data["deployment"]

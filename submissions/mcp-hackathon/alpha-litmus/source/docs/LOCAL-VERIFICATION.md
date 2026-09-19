@@ -6,17 +6,17 @@ Recorded with Python 3.12.10. The 2026-09-19 baseline round recorded 333 passed 
 
 Before edits, `python -m pytest -q` returned `14 passed, 1 warning in 3.23s`. API/MCP imports passed. No project lint/type gates were configured.
 
-## Final Gates (Post-Live Compatibility Fix)
+## Final Gates (Release-Gate Hardening)
 
 ```text
 python -m pytest -q
-562 passed, 1 warning in 50.12s
+614 passed, 1 warning in 76.82s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 15 source files
+Success: no issues found in 16 source files
 
 python -m pip check
 No broken requirements found.
@@ -25,14 +25,17 @@ python tools/secret_scan.py
 (exit 0, no findings; rule/path/line output only)
 ```
 
-No failures or skips. One upstream Starlette/AnyIO deprecation warning remains visible. Ruff has a single scoped E741 annotation for the documented OHLC field `l`, not a global suppression.
+No failures or skips in the final run. One upstream Starlette/AnyIO deprecation warning remains visible. Ruff has a single scoped E741 annotation for the documented OHLC field `l`, not a global suppression.
 
 ## Process Smoke
 
-`python -m tools.local_smoke` exited 0. It checks imports, FastAPI lifespan, health/proof/capabilities, real local MCP stdio discovery and demo dispatch, a Uvicorn loopback TCP health request, and verifier subprocess exit codes. Nexus is disabled. It writes only these generated local artifacts:
+`python -m tools.local_smoke` exited 0. It checks imports, FastAPI lifespan, health/proof/capabilities, real local MCP stdio discovery and demo dispatch, a Uvicorn loopback TCP health request, and verifier subprocess exit codes. Nexus is disabled. All smoke-only verifier artifacts are written under the run's temporary directory and cleaned up afterwards, so a fresh clone with no ignored `reports/` directory passes without manual setup:
 
-- `reports/alphalitmus-synthetic-report.json`
-- `reports/alphalitmus-tampered-report.json`
+- `<tempdir>/alphalitmus-synthetic-report.json`
+- `<tempdir>/alphalitmus-tampered-report.json`
+- `<tempdir>/mcp-stderr.txt`
+
+A regression test (`tests/test_local_smoke.py::test_smoke_artifacts_remain_under_temporary_directory`) proves repository `reports/` state is untouched. Release-gate smoke additionally covers `POST /v1/release-gate` and both `GET /v1/release-gate/demo/` scenarios through `tests/test_release_gate.py`.
 
 Both transports produced the same synthetic-reference `UNPROVEN` report hash:
 
@@ -40,15 +43,18 @@ Both transports produced the same synthetic-reference `UNPROVEN` report hash:
 a9afa0e169636b68550c62f05ff71429da10fec7e379ed6f6efe81e4c305e381
 ```
 
-Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (5 tools):
+Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (6 tools, primary first):
 
 ```text
 challenge_nexus_strategy
+evaluate_strategy_release
 find_failure_boundary
 get_demo_fixture
 run_nexus_window_stability
 verify_failure_certificate
 ```
+
+Primary release-gate paths (`POST /v1/release-gate`, `GET /v1/release-gate/demo/{mixed,shock}`, MCP `evaluate_strategy_release`) share `app.transport.run_release_gate` and return `INSUFFICIENT_EVIDENCE` for synthetic demos. Successful results carry `source_report_verified:true`; the source certificate is validated with the existing `verify_report` (bounded replay, roughly one challenge plus one verification per call) and invalid sources fail closed with sanitized `REPORT_VERIFICATION_FAILED`.
 
 Exact verifier output for the valid export, exit 0:
 
@@ -71,7 +77,7 @@ Hashes establish internal integrity, not source authenticity. Creation time is e
 - Window-compute tests (`tests/test_nexus_compute.py`, `tests/test_compute_api.py`) use mocked transports with synthetic/documentation-derived fixtures and assert zero network calls on disabled/unconfirmed paths. No live Nexus request was made by the application test suite.
 - Mocked upstream tests cover redaction, timeout, malformed envelopes, duplicate keys, streamed size limits, and cancellation propagation. No live Nexus request is required.
 - Dashboard JavaScript was checked using actual demo/reconciliation reports in a Node DOM stub, including stale-request races and error/export behavior.
-- A real Chrome review on 2026-09-19 loaded the loopback dashboard and mixed fixture over HTTP 200, rendered the desktop judge workspace, exercised the shock-demo transition to `REPORT READY / synthetic shock demo / UNPROVEN`, and found no application-origin console errors. At a 390px viewport, document width remained bounded to the viewport with no horizontal overflow. Semantic inspection confirmed the skip link, headings, status region, section navigation, labelled controls, captions, and table headers. This is bounded browser evidence, not a formal WCAG conformance audit or cross-browser certification.
+- A current Chromium review on 2026-09-19 loaded the redesigned dashboard from the public HTTPS deployment. The mixed release-gate demo reached `INSUFFICIENT_EVIDENCE`; the shock transition completed with `COLLECT_MORE_EVIDENCE`, enabled Copy/Download controls, and retained the exact-true source verification boundary. Desktop and 390×844 mobile measurements showed no document-level horizontal overflow, and the browser recorded no application console warning/error. This is one Chromium-family pass, not formal WCAG conformance or cross-browser certification.
 - Existing negative historical reports remain unchanged. The default synthetic demos already fail at baseline; no positive-to-negative showcase was fabricated or tuned.
 
 ## Local Docker Blocker and VPS Execution
@@ -100,8 +106,8 @@ No known vulnerabilities found
 
 This covers locked third-party packages only, not application, deployment, or Nexus security.
 
-DNS, Caddy TLS and the hardened safe-mode container are verified. The remaining
-release steps are to publish the exact source commit, bind the deployment to that
-review commit, run the official offline/online submission validators and open the
-submission PR. Live Nexus review remains separate and must not be enabled
-publicly without authentication and quotas.
+DNS, Caddy TLS, the hardened safe-mode container, public source publication and
+reviewed-commit binding are verified. The remaining external release steps are
+to run the official offline/online submission validators and open the submission
+PR. Live Nexus review remains separate and must not be enabled publicly without
+authentication and quotas.

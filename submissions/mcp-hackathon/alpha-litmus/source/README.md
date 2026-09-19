@@ -1,6 +1,8 @@
-# AlphaLitmus
+# AlphaLitmus — Strategy Release Gate for Agents
 
-Bounded strategy failure experiments, conditional Nexus reconciliation, and independently replayable certificates. Product slug: `alpha-litmus`.
+Before an agent deploys, enables, or scales a trading strategy, it calls AlphaLitmus to identify bounded fragility, contradictions, or insufficient evidence. Product slug: `alpha-litmus`.
+
+Bounded strategy failure experiments, conditional Nexus reconciliation, and independently replayable certificates. The primary capability is `evaluate_strategy_release`; it reuses the existing analysis and certificate engine with no parallel implementation. See [agent call contract](docs/AGENT-CALL-CONTRACT.md).
 
 AlphaLitmus tests a fixed daily EMA reference strategy against cost, delay and parameter perturbations. It can separately reconcile four read-only Nexus evidence surfaces and, with explicit opt-in, submit bounded Nexus backtest window experiments. **The reference strategy is not the Nexus-bound strategy.** The new compute tool has remote side effects; the service as a whole is not read-only. No orders, strategy creation, wallet signing, profit prediction or position sizing is implemented.
 
@@ -28,7 +30,9 @@ Runtime-only installs use `requirements.txt`, which includes the MCP SDK. Open `
 | --- | --- | --- |
 | `GET /health` | None | Status, service, commit, reviewability and provenance caveat |
 | `GET /.well-known/xagent-verification.json` | None | Schema version, slug and commit claim |
-| `GET /v1/capabilities` | None | Five tool names, `opt_in_nexus_backtest_compute` side effect, Nexus read switch and transport limits |
+| `GET /v1/capabilities` | None | Six tool names, `opt_in_nexus_backtest_compute` side effect, Nexus read switch and transport limits |
+| `GET /v1/release-gate/demo/mixed` or `/v1/release-gate/demo/shock` | None | Synthetic `ReleaseGateResult` (`INSUFFICIENT_EVIDENCE`); embeds the complete `Report` as `report` |
+| `POST /v1/release-gate` | Direct `ChallengeRequest` | Strict `ReleaseGateResult` with decision, action, `source_report_verified: true`, and complete `report`; invalid source certificates fail closed with sanitized `REPORT_VERIFICATION_FAILED` |
 | `GET /v1/demo/mixed` or `/v1/demo/shock` | None | Complete synthetic `Report`; replay input is `report.request` |
 | `POST /v1/challenge` | Direct `ChallengeRequest` | Complete current `Report` |
 | `POST /v1/find-failure-boundary` | Direct `ChallengeRequest` | Same complete report, including per-dimension boundaries |
@@ -36,6 +40,8 @@ Runtime-only installs use `requirements.txt`, which includes the MCP SDK. Open `
 | `POST /v1/nexus/window-stability` | Direct `WindowExperimentRequest` | Separate `WindowExperimentReport`; explicitly confirmed remote compute, never trading |
 | `POST /v1/research` | Direct `ResearchRequest` | Deprecated legacy research report |
 | `POST /v1/audit` | `{"symbol":"BTC/USDT"}` | Deprecated fail-closed legacy audit |
+
+Release-gate decisions: `FRAGILE`/`INCONSISTENT` → `BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY`; `UNPROVEN` → `INSUFFICIENT_EVIDENCE`/`COLLECT_MORE_EVIDENCE`; `SURVIVED_TESTS` → `SURVIVED_BOUNDED_TESTS`/`CONTINUE_PAPER_VALIDATION`. `SURVIVED_BOUNDED_TESTS` is not deployment approval. Synthetic demos remain `INSUFFICIENT_EVIDENCE`. The dashboard shows the release decision first with Copy JSON / Download JSON; there is no durable report URL.
 
 There is no persisted report-list/retrieval API in the inspected source. Retain returned JSON through your client or dashboard export. REST verification takes the report itself, **not** `{"report": ...}`. A schema-invalid report receives 422 before verification; a schema-valid inconsistent report returns a verification result with `valid: false`.
 
@@ -87,21 +93,22 @@ Run `python -m app.mcp_server` with this directory as the MCP host's working dir
 
 | Tool | Exact `arguments` shape | Result |
 | --- | --- | --- |
+| `evaluate_strategy_release` (primary) | `{"request": <ChallengeRequest>}` | Strict `ReleaseGateResult`; `BLOCK_DEPLOYMENT`, `INSUFFICIENT_EVIDENCE`, or `SURVIVED_BOUNDED_TESTS` |
 | `challenge_nexus_strategy` | `{"request": <ChallengeRequest>}` | Complete report; reference or Nexus mode |
 | `find_failure_boundary` | `{"request": <ChallengeRequest>}` | Complete report with bounded frontier |
 | `verify_failure_certificate` | `{"report": <Report>}` | Verification result |
 | `get_demo_fixture` | `{"scenario":"mixed"}` or `{"scenario":"shock"}`; default mixed | Complete synthetic `Report` |
 | `run_nexus_window_stability` | `{"request": <WindowExperimentRequest>}` | Separate window report; remote backtest compute side effect, not trading |
 
-Angle-bracket entries in this table are schema placeholders, not literal JSON. A complete no-key call is:
+Angle-bracket entries in this table are schema placeholders, not literal JSON. The primary no-key call is:
 
 ```json
-{"name":"challenge_nexus_strategy","arguments":{"request":{"mode":"nexus","symbol":"BTC/USDT"}}}
+{"name":"evaluate_strategy_release","arguments":{"request":{"mode":"nexus","symbol":"BTC/USDT"}}}
 ```
 
-For reference mode, pass the demo report's `request` as `arguments.request`; do not put the whole report inside `research`. Both challenge tools require the outer `request`; flattened candle arguments are invalid. Unknown arguments are rejected rather than coerced/ignored. Raw stdio frames are bounded to 4,000,000 bytes before SDK decoding; malformed, duplicate-key or oversized frames close the session without trusting their request ID. Tool failures use sanitized errors.
+For reference mode, pass the demo report's `request` as `arguments.request`; do not put the whole report inside `research`. Both challenge tools and the primary release-gate tool require the outer `request`; flattened candle arguments are invalid. REST (`POST /v1/release-gate`) and MCP (`evaluate_strategy_release`) share `app.transport.run_release_gate` and the same decision mapping. Successful release-gate decisions are only issued from a source certificate accepted by the existing `verify_report`; otherwise both surfaces return only the sanitized `REPORT_VERIFICATION_FAILED` code. Verification replays the bounded reference/reconciliation calculations, so a release-gate call costs roughly one challenge plus one verification replay. Unknown arguments are rejected rather than coerced/ignored. Raw stdio frames are bounded to 4,000,000 bytes before SDK decoding; malformed, duplicate-key or oversized frames close the session without trusting their request ID. Tool failures use sanitized errors.
 
-The original four tools retain their read-only behavior and backward-compatible argument wrappers. They are annotated `readOnlyHint=true`, `idempotentHint=true`. The fifth tool is annotated `readOnlyHint=false`, `idempotentHint=false`, `destructiveHint=false`, `openWorldHint=true`: it starts remote backtests, not trades. Do not automatically retry it.
+The primary release-gate tool plus the original four tools retain read-only behavior and backward-compatible argument wrappers. They are annotated `readOnlyHint=true`, `destructiveHint=false`, `idempotentHint=true` (primary: `openWorldHint=true`). The sixth tool (`run_nexus_window_stability`) is annotated `readOnlyHint=false`, `idempotentHint=false`, `destructiveHint=false`, `openWorldHint=true`: it starts remote backtests, not trades. Do not automatically retry it.
 
 ## Nexus Window Compute
 
@@ -142,14 +149,15 @@ Health service and deployment-proof slug are both `alpha-litmus`.
 `ALPHALITMUS_COMMIT` is the only commit environment variable; there is no legacy
 fallback. The local Windows daemon was unreachable, but the target Linux VPS
 subsequently built and ran the safe-mode image successfully with Nexus disabled.
-The public HTTPS edge is live; final reviewed-commit binding remains pending. See
-[VPS deployment](docs/VPS-DEPLOYMENT.md).
+The public HTTPS edge is live and the active safe-mode release is bound to the
+same 40-character public commit reported by `/health` and the well-known proof.
+See [VPS deployment](docs/VPS-DEPLOYMENT.md).
 
 ## Evidence Status
 
-A public safe-mode API and judge UI are deployed, but no profitable-strategy validation, public reviewed commit, rights clearance, registration proof, official validator success or contest acceptance is claimed. Real Studio runs and one callable read-only Nexus MCP snapshot exist; AlphaLitmus classified the candidate `INCONSISTENT` because its recent trades crossed instruments. Do not infer ownership or data-use rights from file availability.
+A public safe-mode API, judge UI, and source repository are available, but no profitable-strategy validation, rights clearance, registration proof, official validator success or contest acceptance is claimed. Real Studio runs and one callable read-only Nexus MCP snapshot exist; AlphaLitmus classified the candidate `INCONSISTENT` because its recent trades crossed instruments. Do not infer ownership or data-use rights from file availability.
 
-Dependency license metadata and the inventory document third-party evidence only. They do not grant a project license, establish project ownership, or clear source, data or branding rights. Current aggregate gate results: 562 passed, Ruff clean, strict mypy clean (15 source files), `pip check` clean, secret scan clean, local smoke exit 0, isolated pip-audit reporting no known vulnerabilities for `requirements.txt`, and a healthy hardened target-VPS container behind verified public HTTPS. Final reviewed-commit binding is not yet complete.
+Dependency license metadata and the inventory document third-party evidence only. They do not grant a project license, establish project ownership, or clear source, data or branding rights. Current aggregate gate results (post-hardening local run, Python 3.12.10): 614 passed with 1 warning, Ruff clean, strict mypy clean (16 source files), `pip check` clean, secret scan exit 0, local smoke exit 0 (6 MCP tools; artifacts under the run's temporary directory), isolated pip-audit reporting no known vulnerabilities for `requirements.txt`, and a healthy hardened target-VPS container behind verified public HTTPS. Successful release-gate decisions require a verified source certificate. The redesigned live UI received a current Chromium browser pass at desktop and 390×844 mobile viewports: mixed auto-load and shock transition completed, export controls enabled, no document-level horizontal overflow appeared, and no application console warning/error was observed. This is not formal accessibility or cross-browser certification. The active health and proof endpoints report the same public 40-character source commit.
 
 - [Demo](docs/DEMO.md): repeatable local presentation with negative and unavailable results.
 - [Methodology](docs/METHODOLOGY.md): exact formulas, thresholds, bootstrap assumptions and citations.

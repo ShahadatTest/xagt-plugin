@@ -1,6 +1,8 @@
-# AlphaLitmus Demo
+# AlphaLitmus Demo — Strategy Release Gate
 
 This is a local demonstration protocol, not recorded live or external evidence. Start the REST service using the README, without a Nexus key. Never replace a missing deployment, strategy run or commit with a plausible placeholder claim.
+
+The judge-first entry point is the release gate: `POST /v1/release-gate` and `GET /v1/release-gate/demo/{mixed,shock}`, plus MCP `evaluate_strategy_release`. The dashboard's first viewport shows the release decision first (decision, action, why, failures, unavailable evidence, IDs, Copy/Download JSON), with detailed research evidence below. Full agent contract: [AGENT-CALL-CONTRACT](AGENT-CALL-CONTRACT.md).
 
 ## Three-Minute Walkthrough
 
@@ -15,7 +17,9 @@ This is a local demonstration protocol, not recorded live or external evidence. 
 
 ## Agent Equivalent
 
-Use MCP `get_demo_fixture` with `{"scenario":"mixed"}`. It returns a full report. Pass that report's `request` to `challenge_nexus_strategy` as `{"request":<report.request>}`. Use the same nested arguments for `find_failure_boundary`; use `{"report":<report>}` for `verify_failure_certificate`. The placeholders must be replaced by actual returned objects. REST takes direct request/report bodies; MCP wraps them in named arguments. The full demo report is not a research input.
+Primary: MCP `evaluate_strategy_release` with `{"request":<ChallengeRequest>}` returns a `ReleaseGateResult` (`BLOCK_DEPLOYMENT`, `INSUFFICIENT_EVIDENCE`, `SURVIVED_BOUNDED_TESTS`) only when the source certificate verifies (`source_report_verified:true`); otherwise only `REPORT_VERIFICATION_FAILED`. REST equivalent is `POST /v1/release-gate` with the direct `ChallengeRequest`, or `GET /v1/release-gate/demo/mixed` for the safe synthetic demo (always `INSUFFICIENT_EVIDENCE`; observed failures stay visible but prove nothing about a real strategy).
+
+Legacy detail path: use MCP `get_demo_fixture` with `{"scenario":"mixed"}`. It returns a full report. Pass that report's `request` to `challenge_nexus_strategy` as `{"request":<report.request>}`. Use the same nested arguments for `find_failure_boundary`; use `{"report":<report>}` for `verify_failure_certificate`. The placeholders must be replaced by actual returned objects. REST takes direct request/report bodies; MCP wraps them in named arguments. The full demo report is not a research input.
 
 ## Measured Local Results
 

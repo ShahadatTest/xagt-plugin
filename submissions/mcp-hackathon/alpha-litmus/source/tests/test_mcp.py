@@ -25,7 +25,8 @@ def test_real_mcp_tool_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
     async def check() -> None:
         tools = await mcp.list_tools()
         assert {tool.name for tool in tools} == set(ARGUMENTS)
-        assert len(tools) == 5
+        assert len(tools) == 6
+        assert "evaluate_strategy_release" in {tool.name for tool in tools}
         for tool in tools:
             assert tool.inputSchema["additionalProperties"] is False
             assert tool.annotations is not None
@@ -33,6 +34,9 @@ def test_real_mcp_tool_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
             assert tool.annotations.destructiveHint is False
             if tool.name == "run_nexus_window_stability":
                 assert tool.annotations.idempotentHint is False
+                assert tool.annotations.openWorldHint is True
+            if tool.name == "evaluate_strategy_release":
+                assert tool.annotations.idempotentHint is True
                 assert tool.annotations.openWorldHint is True
         result = await mcp.call_tool("get_demo_fixture", {"scenario": "shock"})
         assert "synthetic" in str(result)

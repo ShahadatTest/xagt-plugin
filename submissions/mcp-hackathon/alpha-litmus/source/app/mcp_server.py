@@ -12,7 +12,7 @@ from mcp.types import ContentBlock, JSONRPCMessage, Tool, ToolAnnotations
 from pydantic import ValidationError
 
 from app.certificates import verify_report
-from app.contracts import ChallengeRequest, Report, StrictModel, Verification
+from app.contracts import ChallengeRequest, ReleaseGateResult, Report, StrictModel, Verification
 from app.demo import fixture
 from app.lab import challenge
 from app.nexus_compute import WindowExperimentReport, WindowExperimentRequest
@@ -28,10 +28,12 @@ from app.transport import (
     compute,
     decode_json,
     run_challenge,
+    run_release_gate,
     run_window_compute,
 )
 
 ARGUMENTS: dict[str, type[StrictModel]] = {
+    "evaluate_strategy_release": ChallengeArguments,
     "challenge_nexus_strategy": ChallengeArguments,
     "find_failure_boundary": ChallengeArguments,
     "verify_failure_certificate": VerifyArguments,
@@ -109,6 +111,16 @@ class StrictMCP(FastMCP[None]):
 
 
 mcp = StrictMCP("AlphaLitmus", log_level="CRITICAL")
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=True))
+async def evaluate_strategy_release(request: ChallengeRequest) -> ReleaseGateResult:
+    """Primary release gate: bounded fragility check before deploy, enable, or scale.
+
+    Returns BLOCK_DEPLOYMENT, INSUFFICIENT_EVIDENCE, or SURVIVED_BOUNDED_TESTS.
+    Never approves deployment, never executes trades, never financial advice.
+    """
+    return await run_release_gate(request)
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=True))

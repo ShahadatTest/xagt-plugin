@@ -1,6 +1,6 @@
 # AlphaLitmus Submission Checklist
 
-Status: submission preparation. Real Nexus Studio backtests and one authorized read-only AlphaLitmus-to-Nexus MCP reconciliation are documented in [Nexus live evidence](NEXUS-LIVE-EVIDENCE.md). A public safe-mode HTTPS deployment is documented in [VPS deployment](VPS-DEPLOYMENT.md), but no public source repository, registration proof, official validation, submission PR, acceptance or award is established by this workspace.
+Status: submission preparation. Real Nexus Studio backtests and one authorized read-only AlphaLitmus-to-Nexus MCP reconciliation are documented in [Nexus live evidence](NEXUS-LIVE-EVIDENCE.md). A public source repository and commit-bound safe-mode HTTPS deployment are documented, but no registration proof, official validation, submission PR, acceptance or award is established by this workspace.
 
 ## Reviewed Official Requirements
 
@@ -18,9 +18,9 @@ These are mutable `main` URLs, not pinned rule snapshots. Recheck them and the l
 - [x] Complete a real Nexus Studio backtest for the intended named strategy and retain its exact strategy/run identifiers and negative result without claiming an edge.
 - [x] Use OlaXBT Nexus MCP from the callable AlphaLitmus application and retain the resulting strategy evidence and contradiction. The live read-only result is `INCONSISTENT`, not a validation or profitability claim; the separate reference EMA does not validate the Nexus-bound strategy.
 - [x] Deploy an HTTPS API reachable during review and capture synthetic demo capability calls plus safe error behavior; Nexus and remote compute remain disabled in the public deployment.
-- [ ] Publish complete source and pin the exact public GitHub 40-character reviewed commit. There is no established public commit here.
-- [ ] Set `ALPHALITMUS_COMMIT` to that actual commit and `ALPHALITMUS_ENV=production`; verify startup rejects invalid production provenance before deployment.
-- [ ] Keep `/health` public with `status: ok|healthy` and the final review commit. Serve `/.well-known/xagent-verification.json` on the API origin with `schemaVersion: 1`, slug `alpha-litmus`, and the same commit. The routes exist; replace the temporary `local-dev` binding during the final release.
+- [x] Publish complete source and pin the exact public GitHub 40-character reviewed commit.
+- [x] Set `ALPHALITMUS_COMMIT` to the actual commit and `ALPHALITMUS_ENV=production`; verify startup rejects invalid production provenance before deployment.
+- [x] Keep `/health` public with `status: ok|healthy` and the final review commit. Serve `/.well-known/xagent-verification.json` on the API origin with `schemaVersion: 1`, slug `alpha-litmus`, and the same commit.
 - [x] Use submission directory `alpha-litmus`, matching the deployed proof slug exactly.
 - [ ] Protect capability routes behind an authenticated reverse proxy with TLS, request limits and time-limited review access. Share credentials only through the approved private channel.
 - [ ] Enable external Nexus reads only with `ALPHALITMUS_ENABLE_NEXUS=true`, an externally injected strategy-bound `NEXUS_API_KEY`, and confirmed access controls. Never place secrets in source, screenshots, command transcripts or certificates.
@@ -39,7 +39,7 @@ npm run validate:submission -- --dir submissions/mcp-hackathon/<team>-<project>
 npm run validate:submission -- --dir submissions/mcp-hackathon/<team>-<project> --online
 ```
 
-Run both commands against the final package. Do not create a PR or claim validator success until the public source commit and matching production deployment exist.
+Run both commands against the final package. The public source commit and matching production deployment now exist; do not create a PR or claim validator success until the package itself passes both commands.
 
 ## Interpretation
 
