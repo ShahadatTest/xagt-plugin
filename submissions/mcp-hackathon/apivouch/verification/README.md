@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Review commit: `fb0c68141ff4485180e905893357f2e2f426373d`
+- Review commit: `6f2aa31842eaf7c50d11cc8e3ef46570a0e17107`
 - API base URL: `https://apivouch.sklab.cc`
 - Authentication: None for the public review deployment.
 - Tools: `curl`; Python 3 is optional for inspecting the dynamic response.
@@ -18,7 +18,7 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/health
 Expected response:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.3.0","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
+{"status":"ok","service":"apivouch","version":"1.3.0","commit":"6f2aa31842eaf7c50d11cc8e3ef46570a0e17107"}
 ```
 
 ## 2. Deployment proof
@@ -30,7 +30,7 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/.well-known/xagent-v
 The response must include these exact fields:
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"fb0c68141ff4485180e905893357f2e2f426373d","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
+{"schemaVersion":1,"slug":"apivouch","commit":"6f2aa31842eaf7c50d11cc8e3ef46570a0e17107","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
 ```
 
 ## 3. Deterministic Chaos & Refusal Lab
@@ -86,7 +86,7 @@ From the submitted source directory:
 python -m pip install -r backend/requirements-dev.txt
 python scripts/verify_deployment.py \
   --base-url https://apivouch.sklab.cc \
-  --expected-commit fb0c68141ff4485180e905893357f2e2f426373d \
+  --expected-commit 6f2aa31842eaf7c50d11cc8e3ef46570a0e17107 \
   --mode deterministic \
   --require-signed
 ```

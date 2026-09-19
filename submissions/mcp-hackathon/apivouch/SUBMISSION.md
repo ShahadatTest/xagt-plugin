@@ -18,7 +18,7 @@
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/ShahadatTest/apivouch
-- **Review commit:** `fb0c68141ff4485180e905893357f2e2f426373d`
+- **Review commit:** `6f2aa31842eaf7c50d11cc8e3ef46570a0e17107`
 - **Source submitted in this PR:** `source/`
 - **Run tests:** `python -m pip install -r backend/requirements-dev.txt && python -m pytest -q`
 - **Run locally:** `docker compose up --build`, then open `http://localhost:8000`
@@ -28,11 +28,11 @@
 The deployed API exposes:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.3.0","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
+{"status":"ok","service":"apivouch","version":"1.3.0","commit":"6f2aa31842eaf7c50d11cc8e3ef46570a0e17107"}
 ```
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
+{"schemaVersion":1,"slug":"apivouch","commit":"6f2aa31842eaf7c50d11cc8e3ef46570a0e17107"}
 ```
 
 ## Verification
@@ -43,6 +43,7 @@ Repeatable health, deployment-proof, live MCP, and safe-refusal calls are docume
 - **Capability call:** `POST /mcp` calls two independent public USD-to-EUR providers through `apivouch_resolve_verified_outcome`; the verified 2026-09-19 run returned `VERIFIED`, a signed receipt, two observations, and the exact deployment commit.
 - **Deterministic safety evidence:** `POST /api/outcomes/lab/{scenario_id}` accepts no request body and runs one of six allowlisted in-process scenarios. All six passed on the reviewed deployment; the five refusal scenarios returned `UNVERIFIED` with no selected result. Lab receipts use isolated bounded storage and are retrievable through public proof URLs without evicting production evidence.
 - **Expected error behavior:** Missing or invalid tool arguments return a structured MCP tool refusal without attempting provider calls. Provider disagreement, schema failure, origin collision, timeout, or budget failure returns an evidence-bearing `UNVERIFIED` result rather than inventing an answer.
+- **Reproducibility evidence:** The exact submitted snapshot contains 91 tracked source files and passes 1,088 tests locally and inside the production Docker build. API documentation includes an explicit product-home return route, and product links preserve browser Back history.
 
 ## Security and data handling
 
