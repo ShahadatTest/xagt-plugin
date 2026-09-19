@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Review commit: `170b76c62788b03efd2218e5ba9470499ec6b03c`
+- Review commit: `fb0c68141ff4485180e905893357f2e2f426373d`
 - API base URL: `https://apivouch.sklab.cc`
 - Authentication: None for the public review deployment.
 - Tools: `curl`; Python 3 is optional for inspecting the dynamic response.
@@ -18,7 +18,7 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/health
 Expected response:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.2.0","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
+{"status":"ok","service":"apivouch","version":"1.3.0","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
 ```
 
 ## 2. Deployment proof
@@ -30,10 +30,22 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/.well-known/xagent-v
 The response must include these exact fields:
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
+{"schemaVersion":1,"slug":"apivouch","commit":"fb0c68141ff4485180e905893357f2e2f426373d","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
 ```
 
-## 3. Real capability call through MCP
+## 3. Deterministic Chaos & Refusal Lab
+
+List the six server-owned scenarios, then run the disagreement refusal with an exact zero-byte request body:
+
+```bash
+curl --fail --silent --show-error https://apivouch.sklab.cc/api/outcomes/lab
+curl --fail --silent --show-error \
+  --request POST https://apivouch.sklab.cc/api/outcomes/lab/provider-disagreement
+```
+
+The catalog contains exactly six scenarios. The run returns HTTP 200 with `passed: true`, `observed_verdict: "UNVERIFIED"`, no selected provider or result, a signed receipt bound to the review commit, and `integrity_valid_after_storage: true`. Open `/receipts/<receipt_id>` to inspect the same stored evidence in the public Receipt Explorer. These are deterministic fixtures, not live-provider evidence.
+
+## 4. Real capability call through MCP
 
 This calls two independently operated public origins and asks APIVouch to return a result only when both USD-to-EUR values satisfy their schemas and agree within 2%.
 
@@ -55,7 +67,7 @@ For a successful live run, HTTP status is 200 and the JSON-RPC result has:
 
 The selected provider and numeric result are live data and are intentionally not fixed. If the public providers are unavailable or disagree, APIVouch must return an evidence-bearing `UNVERIFIED` refusal rather than a fabricated value.
 
-## 4. Safe invalid-input behavior
+## 5. Safe invalid-input behavior
 
 ```bash
 curl --fail --silent --show-error \
@@ -66,7 +78,7 @@ curl --fail --silent --show-error \
 
 Expected behavior is HTTP 200 with a JSON-RPC result whose `isError` is `true`. The structured error is bounded and no provider call is attempted. Malformed JSON instead returns sanitized HTTP 400 / JSON-RPC parse error; an MCP body over 1 MiB returns sanitized HTTP 413.
 
-## 5. Independent deployment gate
+## 6. Independent deployment gate
 
 From the submitted source directory:
 
@@ -74,7 +86,7 @@ From the submitted source directory:
 python -m pip install -r backend/requirements-dev.txt
 python scripts/verify_deployment.py \
   --base-url https://apivouch.sklab.cc \
-  --expected-commit 170b76c62788b03efd2218e5ba9470499ec6b03c \
+  --expected-commit fb0c68141ff4485180e905893357f2e2f426373d \
   --mode deterministic \
   --require-signed
 ```

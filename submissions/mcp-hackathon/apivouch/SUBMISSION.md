@@ -5,6 +5,7 @@
 - **One-line description:** Route one agent goal across independent public APIs, reject invalid or disagreeing evidence, and return one verified outcome with a signed, tamper-evident receipt.
 - **Who it helps:** Agents and automation systems that must use API-backed facts without trusting the first provider that responds.
 - **Capability boundary:** APIVouch performs bounded read-only provider calls, validates schemas and constraints, requires cross-provider agreement, selects an eligible result, and exposes receipt verification through MCP. It does not settle payments, certify the truth of an upstream provider, supply private-provider credentials, or automatically execute state-changing API operations.
+- **Judge-visible proof:** Every outcome links to a human-readable public Receipt Explorer. The deterministic Chaos & Refusal Lab runs six server-owned scenarios through the real outcome path and demonstrates one verified selection plus five honest refusals without making live-provider claims.
 
 ## Live API
 
@@ -17,7 +18,7 @@
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/ShahadatTest/apivouch
-- **Review commit:** `170b76c62788b03efd2218e5ba9470499ec6b03c`
+- **Review commit:** `fb0c68141ff4485180e905893357f2e2f426373d`
 - **Source submitted in this PR:** `source/`
 - **Run tests:** `python -m pip install -r backend/requirements-dev.txt && python -m pytest -q`
 - **Run locally:** `docker compose up --build`, then open `http://localhost:8000`
@@ -27,11 +28,11 @@
 The deployed API exposes:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.2.0","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
+{"status":"ok","service":"apivouch","version":"1.3.0","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
 ```
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
+{"schemaVersion":1,"slug":"apivouch","commit":"fb0c68141ff4485180e905893357f2e2f426373d"}
 ```
 
 ## Verification
@@ -40,6 +41,7 @@ Repeatable health, deployment-proof, live MCP, and safe-refusal calls are docume
 
 - **Health-check result:** Public HTTPS returns HTTP 200, `status: ok`, and the exact review commit.
 - **Capability call:** `POST /mcp` calls two independent public USD-to-EUR providers through `apivouch_resolve_verified_outcome`; the verified 2026-09-19 run returned `VERIFIED`, a signed receipt, two observations, and the exact deployment commit.
+- **Deterministic safety evidence:** `POST /api/outcomes/lab/{scenario_id}` accepts no request body and runs one of six allowlisted in-process scenarios. All six passed on the reviewed deployment; the five refusal scenarios returned `UNVERIFIED` with no selected result. Lab receipts use isolated bounded storage and are retrievable through public proof URLs without evicting production evidence.
 - **Expected error behavior:** Missing or invalid tool arguments return a structured MCP tool refusal without attempting provider calls. Provider disagreement, schema failure, origin collision, timeout, or budget failure returns an evidence-bearing `UNVERIFIED` result rather than inventing an answer.
 
 ## Security and data handling
