@@ -25,9 +25,10 @@ def test_real_mcp_tool_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
     async def check() -> None:
         tools = await mcp.list_tools()
         assert {tool.name for tool in tools} == set(ARGUMENTS)
-        assert len(tools) == 7
+        assert len(tools) == 8
         assert "evaluate_strategy_release" in {tool.name for tool in tools}
         assert "replay_recorded_nexus_evidence" in {tool.name for tool in tools}
+        assert "evaluate_live_nexus_candidate" in {tool.name for tool in tools}
         for tool in tools:
             assert tool.inputSchema["additionalProperties"] is False
             assert tool.annotations is not None

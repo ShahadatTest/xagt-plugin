@@ -16,7 +16,7 @@ An autonomous trading agent (or its release orchestrator) that is about to:
 - continue running after a market-regime change,
 - perform scheduled strategy revalidation.
 
-The primary MCP tool is `evaluate_strategy_release`. The existing five tools remain available for detail, verification, and bounded compute. A seventh read-only tool `replay_recorded_nexus_evidence` replays only the recorded Candidate v1 snapshot with no arguments.
+The primary MCP tool is `evaluate_strategy_release`. The existing tools remain available for detail, verification, and bounded compute. A seventh read-only tool `replay_recorded_nexus_evidence` replays only the recorded Candidate v1 snapshot. An eighth read-only tool `evaluate_live_nexus_candidate` obtains a separately gated live pulse for that same fixed identity. Both accept no arguments.
 
 ## When it is called
 
@@ -91,6 +91,18 @@ GET /v1/nexus/replay/candidate-v1
 The replay returns strict `RecordedNexusReplay` (`alphalitmus-recorded-replay-1`) with evidence identity (`SKLab AlphaLitmus Candidate v1`, `str_b840280ce037`, run `bt-7544746ff32d`, `BTC/USDT`, capture time), per-file and aggregate SHA-256, `snapshot_integrity:verified`, `integrity_scope:source_commit_bound_content_consistency_not_authenticity`, the embedded authoritative `ReleaseGateResult`, limitations, `historical:true`, `live:false`, `no_execution:true`, `profitability_claimed:false`, and the disclosure that it is recorded historical evidence, not a live call or profit proof. REST accepts no body or query parameters. REST and MCP share `app.transport.run_recorded_replay`; outputs are identical after transport wrapping. The fixed strategy ID is operator-asserted from the strategy-bound key because Nexus read surfaces do not return it. Missing evidence returns `503 RECORDED_EVIDENCE_UNAVAILABLE`; tampering returns `500 RECORDED_EVIDENCE_INVALID`/`RECORDED_EVIDENCE_INTEGRITY_FAILED`, with no synthetic fallback. The checked-in snapshot was captured at `2026-09-19T18:45:48+00:00`, aggregate `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`, and locally verified through identical REST/MCP replay.
 
 Unknown scenarios return 404 `UNKNOWN_SCENARIO`. There is no persisted report-list API; retain `report_id`, canonical hash, and exported JSON via Copy JSON / Download JSON.
+
+Fixed live pulse (no request body/query and strict empty MCP arguments):
+
+```text
+GET /v1/nexus/live/candidate-v1
+```
+
+```json
+{"name":"evaluate_live_nexus_candidate","arguments":{}}
+```
+
+The result is strict `LiveNexusResult` (`alphalitmus-live-nexus-1`) for `SKLab AlphaLitmus Candidate v1`, `str_b840280ce037`, `BTC/USDT`. It reports per-surface fetch times and freshness, cache status/age/TTL, latency, the authoritative verified `ReleaseGateResult`, and exact safety flags: `live:true`, `historical:false`, `no_execution:true`, `profitability_claimed:false`, `recorded_fallback_used:false`. An unavailable upstream returns only a bounded `LIVE_NEXUS_*` error; recorded evidence is never substituted. The tool is read-only/non-destructive but has `idempotentHint:false`, `openWorldHint:true` because a call can refresh external evidence.
 
 ## Decision semantics
 

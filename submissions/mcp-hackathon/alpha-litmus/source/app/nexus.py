@@ -7,6 +7,7 @@ import os
 import re
 from datetime import datetime, timezone
 from typing import Any
+from pathlib import Path
 
 import httpx
 
@@ -21,6 +22,34 @@ _CREDENTIAL = re.compile(r"nxk_|sk[-_]|bearer|api[-_]?key|secret|password|token|
 _SYMBOL = re.compile(r"[A-Z0-9]{1,16}/[A-Z0-9]{1,16}")
 _ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 _PERCENT = re.compile(r"-?[0-9]{1,12}(?:\.[0-9]{1,10})?%")
+
+
+def nexus_api_key() -> str:
+    """Load the Nexus key from env or a bounded Docker-secret file.
+
+    The file path is operator configuration, never caller input. Multiline,
+    oversized, missing, linked, or undecodable files fail closed.
+    """
+    direct = os.getenv("NEXUS_API_KEY", "")
+    if direct:
+        return direct if "\n" not in direct and "\r" not in direct and len(direct) <= 512 else ""
+    raw_path = os.getenv("NEXUS_API_KEY_FILE", "")
+    if not raw_path:
+        return ""
+    path = Path(raw_path)
+    try:
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > 512:
+            return ""
+        value = path.read_text(encoding="utf-8").strip()
+    except (OSError, UnicodeError):
+        return ""
+    if not value or len(value) > 512 or "\n" in value or "\r" in value:
+        return ""
+    return value
+
+
+def nexus_key_configured() -> bool:
+    return bool(nexus_api_key())
 
 
 def number(value: object) -> float | None:
@@ -153,7 +182,7 @@ def sanitize(label: str, data: object, key: str = "") -> dict[str, Any]:
 
 
 async def read_nexus(symbol: str) -> dict[str, Any]:
-    key = os.getenv("NEXUS_API_KEY", "")
+    key = nexus_api_key()
     reason = "NEXUS_NOT_CONFIGURED" if not key else "NEXUS_INVALID_SYMBOL"
     if not key or sanitize("signal", {"symbol": symbol}, key).get("symbol") != symbol:
         return {label: {"status": "unavailable", "reason": reason} for label in SURFACES}

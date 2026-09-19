@@ -28,6 +28,7 @@ from app.transport import (
     compute,
     decode_json,
     run_challenge,
+    run_live_nexus_candidate,
     run_recorded_replay,
     run_release_gate,
     run_window_compute,
@@ -35,6 +36,10 @@ from app.transport import (
 
 
 class ReplayRecordedArguments(StrictModel):
+    pass
+
+
+class LiveNexusArguments(StrictModel):
     pass
 
 
@@ -46,6 +51,7 @@ ARGUMENTS: dict[str, type[StrictModel]] = {
     "get_demo_fixture": DemoArguments,
     "run_nexus_window_stability": WindowExperimentArguments,
     "replay_recorded_nexus_evidence": ReplayRecordedArguments,
+    "evaluate_live_nexus_candidate": LiveNexusArguments,
 }
 
 
@@ -174,6 +180,17 @@ async def replay_recorded_nexus_evidence() -> dict[str, Any]:
     not a live market call and not evidence of future profitability.
     """
     result = await run_recorded_replay()
+    return result.model_dump(mode="json")
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=False, openWorldHint=True))
+async def evaluate_live_nexus_candidate() -> dict[str, Any]:
+    """Evaluate fixed Candidate v1 against fresh read-only Nexus evidence.
+
+    May serve a disclosed cache entry up to 60 seconds old. Never backtests,
+    trades, accepts caller-selected identity, or falls back to recorded data.
+    """
+    result = await run_live_nexus_candidate()
     return result.model_dump(mode="json")
 
 

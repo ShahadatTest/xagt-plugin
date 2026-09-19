@@ -16,6 +16,7 @@ from app.certificates import verify_report
 from app.contracts import ChallengeRequest, Provenance, ReleaseGateResult, Report, StrictModel, Verification
 from app.demo import fixture
 from app.lab import challenge
+from app.live_nexus import LiveNexusResult, live_nexus_enabled
 from app.nexus_compute import WindowExperimentReport, WindowExperimentRequest
 from app.provenance import commit_state, validate_startup
 from app.recorded_nexus import RecordedNexusReplay
@@ -29,6 +30,7 @@ from app.transport import (
     nexus_enabled,
     nexus_evidence,
     run_challenge,
+    run_live_nexus_candidate,
     run_recorded_replay,
     run_release_gate,
     run_window_compute,
@@ -54,12 +56,14 @@ class Capabilities(StrictModel):
         "evaluate_strategy_release", "challenge_nexus_strategy", "find_failure_boundary",
         "verify_failure_certificate", "get_demo_fixture",
         "run_nexus_window_stability", "replay_recorded_nexus_evidence",
+        "evaluate_live_nexus_candidate",
     ])
     side_effects: list[Literal["opt_in_nexus_backtest_compute"]] = Field(
         default=["opt_in_nexus_backtest_compute"], max_length=1,
     )
     execution: Literal["paper_only"] = "paper_only"
     nexus_enabled: bool
+    live_candidate_enabled: bool
     max_body_bytes: Literal[4000000] = 4_000_000
     max_json_depth: Literal[32] = 32
     max_concurrent_per_process: Literal[2] = 2
@@ -237,7 +241,7 @@ async def verification() -> Proof:
 
 @app.get("/v1/capabilities", response_model=Capabilities)
 async def capabilities() -> Capabilities:
-    return Capabilities(nexus_enabled=nexus_enabled())
+    return Capabilities(nexus_enabled=nexus_enabled(), live_candidate_enabled=live_nexus_enabled())
 
 
 @app.post("/v1/challenge", response_model=Report)
@@ -326,3 +330,16 @@ async def replay_candidate(request: Request) -> RecordedNexusReplay:
 
     result = await run_recorded_replay()
     return RecordedNexusReplay.model_validate(result.model_dump(mode="python"))
+
+
+@app.get("/v1/nexus/live/candidate-v1", response_model=LiveNexusResult)
+async def live_candidate(request: Request) -> LiveNexusResult:
+    """Run the fixed Candidate v1 read-only live Nexus release gate.
+
+    No body, query parameters, caller-selected symbol, strategy, or fallback.
+    """
+    if request.query_params:
+        raise HTTPException(400, "QUERY_PARAMETERS_NOT_ALLOWED")
+    if await request.body():
+        raise HTTPException(400, "BODY_NOT_ALLOWED")
+    return await run_live_nexus_candidate()

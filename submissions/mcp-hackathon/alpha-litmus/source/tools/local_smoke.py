@@ -30,7 +30,8 @@ def offline_environment(temporary: Path) -> dict[str, str]:
     allowed = {"SYSTEMROOT", "WINDIR", "COMSPEC", "PATH", "PATHEXT", "LANG", "LC_ALL"}
     env = {key: value for key, value in os.environ.items() if key.upper() in allowed}
     env.update(
-        ALPHALITMUS_ENABLE_NEXUS="false", ALPHALITMUS_ENV="test",
+        ALPHALITMUS_ENABLE_NEXUS="false", ALPHALITMUS_ENABLE_LIVE_NEXUS="false",
+        ALPHALITMUS_ENV="test",
         ALPHALITMUS_ENABLE_NEXUS_BACKTEST="false",
         ALPHALITMUS_COMMIT="local-dev", PYTHONDONTWRITEBYTECODE="1",
         TEMP=str(temporary), TMP=str(temporary), TMPDIR=str(temporary),
@@ -58,10 +59,11 @@ async def check_mcp(report: Report, env: dict[str, str], temporary: Path) -> dic
                     await session.initialize()
                     tools = await session.list_tools()
                     names = sorted(tool.name for tool in tools.tools)
-                    assert len(names) == 7
+                    assert len(names) == 8
                     assert set(names) == set(mcp_server.ARGUMENTS)
                     assert "evaluate_strategy_release" in names
                     assert "replay_recorded_nexus_evidence" in names
+                    assert "evaluate_live_nexus_candidate" in names
                     for tool in tools.tools:
                         assert tool.annotations is not None
                         assert tool.annotations.readOnlyHint == (tool.name != "run_nexus_window_stability")

@@ -31,13 +31,13 @@ Final local gates, Python 3.12.10, after the release-gate hardening:
 
 ```text
 python -m pytest -q
-664 passed, 1 warning in 69.78s
+680 passed, 1 warning in 71.30s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 17 source files
+Success: no issues found in 18 source files
 
 python -m pip check
 No broken requirements found.
@@ -46,7 +46,7 @@ python tools/secret_scan.py
 (exit 0, no findings)
 
 python -m tools.local_smoke
-(exit 0; 7 MCP tools including primary evaluate_strategy_release and recorded replay; REST/MCP hash-equivalent UNPROVEN synthetic report)
+(exit 0; 8 MCP tools including primary release gate, recorded replay, and fixed live pulse; REST/MCP hash-equivalent UNPROVEN synthetic report)
 ```
 
 The release-gate upgrade adds `POST /v1/release-gate`, `GET /v1/release-gate/demo/{mixed,shock}`, MCP `evaluate_strategy_release` (primary, `readOnlyHint=true`), and the `app/release_gate.py` projection. Successful gate results are only issued from a source certificate accepted by the existing `verify_report` (`source_report_verified:true`); invalid sources fail closed with sanitized `REPORT_VERIFICATION_FAILED`. Verification replays the bounded reference/reconciliation calculations, so a gate call costs roughly one challenge plus one verification replay. Existing five tools and report verification remain authoritative and backward compatible. Synthetic demos remain `INSUFFICIENT_EVIDENCE`; `SURVIVED_BOUNDED_TESTS` is not deployment approval. See [agent call contract](AGENT-CALL-CONTRACT.md).
@@ -59,7 +59,7 @@ There were zero failures and zero skips in the final run. The warning is Starlet
 
 Local health service and proof slug both returned `alpha-litmus`. The source reads only `ALPHALITMUS_COMMIT`, without a legacy fallback. Development reported `local-dev`, not an actual public review commit. Body handling is capped at 4,000,000 bytes, eight intake slots, a 10-second body deadline and two compute slots per process; `GET /health` bypasses upload intake and compute admission and never waits for body input.
 
-A real local MCP stdio subprocess client discovered all seven tools (including primary `evaluate_strategy_release` and `replay_recorded_nexus_evidence`) and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
+A real local MCP stdio subprocess client discovered all eight tools (including primary `evaluate_strategy_release`, recorded replay, and fixed live pulse) and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
 
 A current Chromium pass on 2026-09-19 exercised the redesigned gate-first dashboard over public HTTPS. The mixed demo auto-loaded, the shock transition reached `INSUFFICIENT_EVIDENCE` with `COLLECT_MORE_EVIDENCE`, Copy/Download controls enabled only after a verified result, desktop and 390×844 mobile layouts had no document-level horizontal overflow, and no application console warning/error was observed. Static/TestClient and Node syntax checks remain in place. This is not formal accessibility conformance or broad cross-browser coverage.
 
@@ -72,7 +72,7 @@ limits and no host port. Nexus remained disabled and no key was deployed. See
 reviewed-commit binding are verified there.
 
 - [x] Final source imports, tests, lint and strict types pass with recorded exact commands/environment.
-- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and seven tool names (primary `evaluate_strategy_release`, recorded replay, plus the existing five).
+- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and eight tool names (primary release gate, recorded replay, fixed live pulse, plus the existing five).
 - [x] Synthetic examples cannot receive an eligible survival verdict; missing Nexus evidence remains unproven.
 - [x] A certificate verifies offline; both an ordinary tamper and a rehashed inconsistent analysis fail verification.
 - [x] Provenance contract enforced: reviewable requires nonzero lowercase 40-hex, unreviewable permits only `local-dev`; the rehashed `abc123` claim is rejected by generation, REST, MCP, and the offline verifier.
@@ -82,7 +82,8 @@ reviewed-commit binding are verified there.
 - [ ] The live window-compute path has not run. It retains its separate switch and per-request confirmation and is not required for the read-only reconciliation above.
 - [x] Container builds on the target Linux VPS from Python 3.12, runs non-root, serves health, and includes MCP runtime dependencies.
 - [x] Public DNS, automatic TLS, HTTP-to-HTTPS redirect, edge body limit, security headers and reviewer access are exercised in safe-mode deployment without regressing APIVouch health.
-- [ ] Caller authentication, per-principal quotas and retention controls are exercised before enabling live Nexus access or remote compute.
+- [x] Fixed Candidate v1 live access is isolated from arbitrary Nexus routes, loads a bounded file-mounted secret, uses a 60-second cache, per-process rate/refresh/circuit bounds, and never substitutes recorded evidence.
+- [ ] Caller authentication, per-principal distributed quotas and retention controls are still required before enabling arbitrary live Nexus access or remote compute.
 - [ ] Actual source/data/branding/dependency rights and official submission artifacts are completed by authorized owners.
 
 The healthy container is publicly reachable through verified HTTPS in safe mode

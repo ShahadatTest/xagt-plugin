@@ -12,13 +12,13 @@ Before edits, `python -m pytest -q` returned `14 passed, 1 warning in 3.23s`. AP
 
 ```text
 python -m pytest -q
-664 passed, 1 warning in 69.78s
+680 passed, 1 warning in 71.30s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 17 source files
+Success: no issues found in 18 source files
 
 python -m pip check
 No broken requirements found.
@@ -45,10 +45,11 @@ Both transports produced the same synthetic-reference `UNPROVEN` report hash:
 a9afa0e169636b68550c62f05ff71429da10fec7e379ed6f6efe81e4c305e381
 ```
 
-Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (7 tools, primary first):
+Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (8 tools, primary first):
 
 ```text
 challenge_nexus_strategy
+evaluate_live_nexus_candidate
 evaluate_strategy_release
 find_failure_boundary
 get_demo_fixture

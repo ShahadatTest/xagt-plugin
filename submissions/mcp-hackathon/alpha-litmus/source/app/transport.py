@@ -25,6 +25,7 @@ from app.contracts import ChallengeRequest, ReleaseGateResult, Report, StrictMod
 from app.lab import challenge
 from app.nexus import read_nexus
 from app.recorded_nexus import RecordedNexusReplay
+from app.live_nexus import LiveNexusResult
 from app.release_gate import project
 from app.nexus_compute import (
     NexusComputeError, WindowEvidence, WindowExperimentReport, WindowExperimentRequest, run_window_experiment,
@@ -259,6 +260,24 @@ async def run_recorded_replay() -> RecordedNexusReplay:
             if exc.code == "RECORDED_EVIDENCE_INTEGRITY_FAILED":
                 raise TransportError(500, exc.code) from None
             raise TransportError(500, "RECORDED_EVIDENCE_INVALID") from None
+
+
+async def run_live_nexus_candidate() -> LiveNexusResult:
+    """Shared fixed-strategy live path with no recorded fallback."""
+    from app.live_nexus import LiveNexusError, run_live_nexus_candidate as run_live
+
+    async with admission.slot():
+        try:
+            return await run_live()
+        except LiveNexusError as exc:
+            status = {
+                "LIVE_NEXUS_DISABLED": 503,
+                "LIVE_NEXUS_RATE_LIMITED": 429,
+                "LIVE_NEXUS_CIRCUIT_OPEN": 503,
+                "LIVE_NEXUS_UNAVAILABLE": 502,
+                "LIVE_NEXUS_INVALID": 502,
+            }.get(exc.code, 502)
+            raise TransportError(status, exc.code) from None
 
 
 async def run_window_compute(request: WindowExperimentRequest) -> WindowExperimentReport:

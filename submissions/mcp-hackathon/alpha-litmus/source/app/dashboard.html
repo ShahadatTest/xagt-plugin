@@ -39,6 +39,7 @@
         <div class="toolbar">
           <button class="btn btn--primary" id="mixed" type="button">Run safe release-gate demo</button>
           <button class="btn" id="shock" type="button">[ Run shock test ]</button>
+          <button class="btn" id="run-live-nexus" type="button">Run live Nexus check →</button>
           <button class="btn" id="replay-recorded" type="button">Replay real Nexus evidence →</button>
           <button class="btn" id="copy" type="button" disabled>[ Copy JSON ]</button>
           <button class="btn" id="download" type="button" disabled>[ Export report JSON ]</button>
@@ -96,9 +97,39 @@
         <details><summary>Inspect complete release-gate JSON</summary><pre id="raw-gate" tabindex="0">Unavailable / no current result.</pre></details>
       </div>
     </section>
+    <section class="panel overview" id="live-nexus" aria-labelledby="live-nexus-title" tabindex="-1">
+      <div class="overview__head">
+        <div><div class="overview__label" id="live-nexus-title">2 / Live Nexus pulse (fixed Candidate v1)</div><div class="overview__verdict" id="live-decision">LIVE NEXUS / AWAITING CHECK</div><p class="overview__reason" id="live-action">Fetch four read-only Nexus evidence surfaces for the fixed BTC/USDT candidate and run the verified release gate.</p></div>
+        <div class="verdict-chip" id="live-source">Live source not checked</div>
+      </div>
+      <div class="overview__metrics" id="live-metrics"></div>
+      <div class="gate__body">
+        <p id="live-disclosure" class="muted">A live pulse is evidence freshness, not trading authorization, source authentication, or proof of future profitability.</p>
+        <div id="live-status" class="status" role="status" aria-live="polite">Awaiting live check.</div>
+        <div id="live-error" class="notice error" role="alert" hidden></div>
+        <h3>Fixed identity and freshness</h3>
+        <dl class="gate__ids">
+          <div><dt>Strategy</dt><dd id="live-strategy">Unavailable</dd></div>
+          <div><dt>Strategy ID</dt><dd id="live-strategy-id">Unavailable</dd></div>
+          <div><dt>Symbol</dt><dd id="live-symbol">Unavailable</dd></div>
+          <div><dt>Upstream fetched</dt><dd id="live-fetched">Unavailable</dd></div>
+          <div><dt>Surfaces</dt><dd id="live-surfaces">Unavailable</dd></div>
+          <div><dt>Freshness</dt><dd id="live-freshness">Unavailable</dd></div>
+          <div><dt>Cache</dt><dd id="live-cache">Unavailable</dd></div>
+          <div><dt>Report ID</dt><dd id="live-report-id">Unavailable</dd></div>
+        </dl>
+        <h3>Observed failures</h3>
+        <ul id="live-failures"><li>Awaiting live check.</li></ul>
+        <div class="toolbar">
+          <button class="btn" id="copy-live" type="button" disabled>Copy live result</button>
+          <button class="btn" id="download-live" type="button" disabled>Download live result</button>
+        </div>
+        <details><summary>Inspect complete live result JSON</summary><pre id="raw-live" tabindex="0">Unavailable / no live result yet.</pre></details>
+      </div>
+    </section>
     <section class="panel overview" id="recorded" aria-labelledby="recorded-title" tabindex="-1">
       <div class="overview__head">
-        <div><div class="overview__label" id="recorded-title">2 / Recorded Nexus evidence (historical replay)</div><div class="overview__verdict" id="recorded-decision">RECORDED NEXUS EVIDENCE / AWAITING REPLAY</div><p class="overview__reason" id="recorded-action">Replay recorded historical evidence through the production reconciliation engine. No live call, no key required.</p></div>
+        <div><div class="overview__label" id="recorded-title">3 / Recorded Nexus evidence (historical replay)</div><div class="overview__verdict" id="recorded-decision">RECORDED NEXUS EVIDENCE / AWAITING REPLAY</div><p class="overview__reason" id="recorded-action">Replay recorded historical evidence through the production reconciliation engine. No live call, no key required.</p></div>
         <div class="verdict-chip" id="recorded-source">Source unavailable</div>
       </div>
       <div class="overview__metrics" id="recorded-metrics"></div>
@@ -609,6 +640,110 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     $('download-inline').addEventListener('click', downloadGate);
     $('copy').addEventListener('click', copyGate);
     $('copy-inline').addEventListener('click', copyGate);
+    let liveResult = null;
+    let liveSequence = 0;
+    function setLiveButtons(enabled) {
+      ['copy-live', 'download-live'].forEach(id => { const node = $(id); if (node) node.disabled = !enabled; });
+    }
+    function clearLive(message) {
+      liveResult = null;
+      setLiveButtons(false);
+      $('live-decision').textContent = 'LIVE NEXUS / UNAVAILABLE';
+      $('live-action').textContent = message;
+      $('live-source').textContent = 'Live source unavailable';
+      ['live-strategy', 'live-strategy-id', 'live-symbol', 'live-fetched', 'live-surfaces', 'live-freshness', 'live-cache', 'live-report-id'].forEach(id => { $(id).textContent = 'Unavailable'; });
+      $('live-failures').replaceChildren(element('li', message));
+      $('raw-live').textContent = message;
+      $('live-metrics').replaceChildren();
+    }
+    function renderLive(result) {
+      const currentGate = object(result.release_gate) ? result.release_gate : {};
+      $('live-decision').textContent = 'LIVE NEXUS / ' + String(currentGate.decision || 'UNAVAILABLE');
+      $('live-action').textContent = 'Recommended action: ' + String(currentGate.recommended_action || 'Unavailable') + ' / Source verdict: ' + String(currentGate.source_verdict || 'Unavailable');
+      $('live-source').textContent = 'LIVE / ' + String(result.source || 'source unavailable');
+      $('live-strategy').textContent = result.strategy_name || unavailable;
+      $('live-strategy-id').textContent = result.strategy_id || unavailable;
+      $('live-symbol').textContent = result.symbol || unavailable;
+      $('live-fetched').textContent = result.upstream_fetched_at || unavailable;
+      $('live-surfaces').textContent = list(result.evidence_surfaces).join(', ') || unavailable;
+      const fresh = object(result.freshness_seconds) ? Object.entries(result.freshness_seconds).map(([key, value]) => key + ': ' + String(value) + 's').join(', ') : unavailable;
+      $('live-freshness').textContent = fresh;
+      $('live-cache').textContent = String(result.cache_status || 'unavailable') + ' / age ' + String(result.cache_age_seconds ?? 'unavailable') + 's / TTL ' + String(result.cache_ttl_seconds ?? 'unavailable') + 's';
+      $('live-report-id').textContent = currentGate.report_id || unavailable;
+      $('live-disclosure').textContent = result.disclosure || 'Live evidence is not proof of future profitability.';
+      const failures = list(currentGate.observed_failures);
+      $('live-failures').replaceChildren();
+      if (!failures.length) $('live-failures').append(element('li', 'No observed failures reported; bounded survival is not proof of an edge.'));
+      else failures.forEach(value => $('live-failures').append(element('li', value)));
+      $('raw-live').textContent = JSON.stringify(result, null, 2);
+      [[ 'Decision', currentGate.decision ], [ 'Action', currentGate.recommended_action ], [ 'Cache', result.cache_status ], [ 'Latency', String(result.upstream_latency_ms) + ' ms' ]].forEach(([label, value]) => {
+        const metric = element('div', undefined, 'overview__metric');
+        metric.append(element('span', label), element('strong', value));
+        $('live-metrics').append(metric);
+      });
+    }
+    async function loadLive() {
+      const current = ++liveSequence;
+      $('live-status').textContent = 'REQUESTING / fixed Candidate v1 / four read-only Nexus surfaces';
+      $('live-error').hidden = true;
+      $('live-error').textContent = '';
+      clearLive('Unavailable / live request in progress. Previous live result cleared.');
+      let timedOut = false;
+      const active = new AbortController();
+      const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 45000);
+      try {
+        const response = await fetch('/v1/nexus/live/candidate-v1', {method: 'GET', signal: active.signal, cache: 'no-store'});
+        const raw = await response.text();
+        if (current !== liveSequence) return;
+        let result;
+        try { result = JSON.parse(raw); }
+        catch { throw new Error('HTTP ' + response.status + ': server returned non-JSON content.'); }
+        if (!response.ok) {
+          const code = object(result) ? String(result.detail || '') : '';
+          if (code.indexOf('LIVE_NEXUS_') === 0) throw new Error(code + ' / no live result is claimed.');
+          throw new Error('HTTP ' + response.status + ': live result unavailable.');
+        }
+        const currentGate = object(result.release_gate) ? result.release_gate : null;
+        if (!object(result) || result.live_schema_version !== 'alphalitmus-live-nexus-1' || result.strategy_id !== 'str_b840280ce037' || result.symbol !== 'BTC/USDT') {
+          throw new Error('CONTRACT VALIDATION FAILED / unexpected live identity.');
+        }
+        if (result.live !== true || result.historical !== false || result.no_execution !== true || result.profitability_claimed !== false || result.recorded_fallback_used !== false) {
+          throw new Error('CONTRACT VALIDATION FAILED / exact live safety flags are required.');
+        }
+        if (!currentGate || currentGate.source_report_verified !== true) {
+          throw new Error('CONTRACT VALIDATION FAILED / source_report_verified must be exactly true. No result is displayed or exported.');
+        }
+        renderLive(result);
+        liveResult = result;
+        setLiveButtons(true);
+        $('live-status').textContent = 'LIVE RESULT READY / ' + String(result.cache_status).toUpperCase() + ' / ' + String(currentGate.decision);
+      } catch (error) {
+        if (current !== liveSequence) return;
+        clearLive('Unavailable / live Nexus check failed. No recorded fallback was used.');
+        $('live-status').textContent = 'LIVE RESULT UNAVAILABLE / export disabled';
+        $('live-error').textContent = 'LIVE NEXUS UNAVAILABLE / ' + (timedOut ? 'Timed out after 45 seconds.' : (error && error.message) || String(error));
+        $('live-error').hidden = false;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+    function downloadLive() {
+      if (!liveResult || !object(liveResult.release_gate) || liveResult.release_gate.source_report_verified !== true) return;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(liveResult, null, 2)], {type: 'application/json'}));
+      const link = element('a');
+      link.href = url;
+      link.download = 'alphalitmus-live-candidate-v1-' + String(liveResult.release_gate.report_id || 'report').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) + '.json';
+      document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    async function copyLive() {
+      if (!liveResult || !object(liveResult.release_gate) || liveResult.release_gate.source_report_verified !== true) return;
+      try { await navigator.clipboard.writeText(JSON.stringify(liveResult, null, 2)); $('live-status').textContent = 'COPIED / live result JSON copied.'; }
+      catch { $('live-status').textContent = 'COPY FAILED / clipboard unavailable; use Download live result.'; }
+    }
+    $('run-live-nexus').addEventListener('click', loadLive);
+    $('copy-live').addEventListener('click', copyLive);
+    $('download-live').addEventListener('click', downloadLive);
     let recorded = null;
     let recordedSequence = 0;
     function setRecordedButtons(enabled) {
@@ -752,6 +887,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     if (copyRecordedButton) copyRecordedButton.addEventListener('click', copyRecorded);
     const downloadRecordedButton = $('download-recorded');
     if (downloadRecordedButton) downloadRecordedButton.addEventListener('click', downloadRecorded);
+    clearLive('Unavailable / awaiting live Nexus check. Select Run live Nexus check.');
     clearRecorded('Unavailable / awaiting recorded replay. Select Replay real Nexus evidence.');
     clearReport('Unavailable / awaiting current release-gate result.');
     load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed');

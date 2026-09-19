@@ -22,7 +22,7 @@ from app.contracts import ChallengeRequest
 from app.demo import fixture
 from app.lab import challenge
 from app.main import app
-from app.mcp_server import ARGUMENTS, ReplayRecordedArguments, mcp
+from app.mcp_server import ARGUMENTS, LiveNexusArguments, ReplayRecordedArguments, mcp
 from tools.capture_nexus_snapshot import LIMITATIONS as CAPTURE_LIMITATIONS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -392,7 +392,7 @@ def test_synthetic_demo_unchanged() -> None:
     assert report.verdict == "UNPROVEN"
 
 
-def test_six_tool_schemas_unchanged_plus_seventh() -> None:
+def test_seven_tool_schemas_unchanged_plus_live_eighth() -> None:
     from app.transport import ChallengeArguments, DemoArguments, VerifyArguments, WindowExperimentArguments
 
     assert ARGUMENTS["evaluate_strategy_release"] is ChallengeArguments
@@ -402,11 +402,12 @@ def test_six_tool_schemas_unchanged_plus_seventh() -> None:
     assert ARGUMENTS["get_demo_fixture"] is DemoArguments
     assert ARGUMENTS["run_nexus_window_stability"] is WindowExperimentArguments
     assert ARGUMENTS["replay_recorded_nexus_evidence"] is ReplayRecordedArguments
-    assert len(ARGUMENTS) == 7
+    assert ARGUMENTS["evaluate_live_nexus_candidate"] is LiveNexusArguments
+    assert len(ARGUMENTS) == 8
 
     async def check() -> None:
         tools = await mcp.list_tools()
-        assert len(tools) == 7
+        assert len(tools) == 8
         replay_tool = next(t for t in tools if t.name == "replay_recorded_nexus_evidence")
         assert replay_tool.annotations is not None
         assert replay_tool.annotations.readOnlyHint is True

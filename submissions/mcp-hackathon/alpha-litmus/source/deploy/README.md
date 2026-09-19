@@ -1,7 +1,8 @@
 # AlphaLitmus VPS deployment
 
-The checked-in Compose configuration intentionally deploys the public synthetic
-demo with Nexus reads and remote compute disabled. It never accepts a Nexus key.
+The checked-in Compose configuration keeps arbitrary Nexus reads and remote
+compute disabled. The separately gated fixed Candidate v1 live pulse defaults
+off and reads its key only from a Docker-mounted secret file.
 
 From the project root on the VPS:
 
@@ -21,7 +22,10 @@ source using its exact nonzero lowercase 40-character commit and
 `ALPHALITMUS_ENV=production`, then confirm health and proof expose the same
 commit.
 
-Do not enable Nexus on this public configuration. A later live-review deployment
-requires TLS, authentication, external secret injection, explicit quotas and a
-separate operator decision. Remote backtest compute remains disabled unless all
-of its documented gates are deliberately enabled.
+For an authorized live-candidate deployment, place the strategy-bound key in an
+untracked root-owned file, point `ALPHALITMUS_NEXUS_KEY_FILE` at it, and set
+`ALPHALITMUS_ENABLE_LIVE_NEXUS=true`. Keep `ALPHALITMUS_ENABLE_NEXUS=false` and
+`ALPHALITMUS_ENABLE_NEXUS_BACKTEST=false`. The live endpoint is fixed to one
+strategy/symbol, performs four read-only calls, caches for 60 seconds, and never
+falls back to recorded evidence. `deploy/no-nexus-key` is only a blank default
+mount target; never place a credential in the repository or Compose environment.
