@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Review commit: `cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9`
+- Review commit: `170b76c62788b03efd2218e5ba9470499ec6b03c`
 - API base URL: `https://apivouch.sklab.cc`
 - Authentication: None for the public review deployment.
 - Tools: `curl`; Python 3 is optional for inspecting the dynamic response.
@@ -18,7 +18,7 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/health
 Expected response:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.2.0","commit":"cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9"}
+{"status":"ok","service":"apivouch","version":"1.2.0","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
 ```
 
 ## 2. Deployment proof
@@ -30,7 +30,7 @@ curl --fail --silent --show-error https://apivouch.sklab.cc/.well-known/xagent-v
 The response must include these exact fields:
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
+{"schemaVersion":1,"slug":"apivouch","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c","apiBaseUrl":"https://apivouch.sklab.cc","healthCheckUrl":"https://apivouch.sklab.cc/health","mcpEndpoint":"https://apivouch.sklab.cc/mcp"}
 ```
 
 ## 3. Real capability call through MCP
@@ -74,7 +74,7 @@ From the submitted source directory:
 python -m pip install -r backend/requirements-dev.txt
 python scripts/verify_deployment.py \
   --base-url https://apivouch.sklab.cc \
-  --expected-commit cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9 \
+  --expected-commit 170b76c62788b03efd2218e5ba9470499ec6b03c \
   --mode deterministic \
   --require-signed
 ```

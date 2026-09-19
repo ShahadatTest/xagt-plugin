@@ -17,7 +17,7 @@
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/ShahadatTest/apivouch
-- **Review commit:** `cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9`
+- **Review commit:** `170b76c62788b03efd2218e5ba9470499ec6b03c`
 - **Source submitted in this PR:** `source/`
 - **Run tests:** `python -m pip install -r backend/requirements-dev.txt && python -m pytest -q`
 - **Run locally:** `docker compose up --build`, then open `http://localhost:8000`
@@ -27,11 +27,11 @@
 The deployed API exposes:
 
 ```json
-{"status":"ok","service":"apivouch","version":"1.2.0","commit":"cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9"}
+{"status":"ok","service":"apivouch","version":"1.2.0","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
 ```
 
 ```json
-{"schemaVersion":1,"slug":"apivouch","commit":"cead54a30bb3b7cc1e4b4e198d9da88cdc184ff9"}
+{"schemaVersion":1,"slug":"apivouch","commit":"170b76c62788b03efd2218e5ba9470499ec6b03c"}
 ```
 
 ## Verification
