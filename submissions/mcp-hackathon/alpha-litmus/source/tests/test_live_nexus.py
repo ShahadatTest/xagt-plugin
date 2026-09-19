@@ -303,6 +303,7 @@ def test_dashboard_exposes_fail_closed_live_pulse() -> None:
     html = TestClient(app).get("/").text
     assert 'id="run-live-nexus"' in html
     assert 'id="live-nexus"' in html
+    assert 'id="live-details"' in html
     assert "fetch('/v1/nexus/live/candidate-v1'" in html
     assert "result.recorded_fallback_used !== false" in html
     assert "currentGate.source_report_verified !== true" in html

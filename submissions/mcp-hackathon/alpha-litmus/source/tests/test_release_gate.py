@@ -397,6 +397,10 @@ def test_ui_judge_first(client: TestClient) -> None:
                  "during scheduled strategy revalidation"):
         assert item in html
     assert "evaluate_strategy_release" in html
+    assert 'class="hero__proof"' in html
+    assert 'class="context-grid"' in html
+    assert 'class="deep-evidence"' in html
+    assert "Know when a strategy should not ship." in html
     # Ordered decision-first blocks.
     for marker in ("gate-decision", "gate-action", "gate-why", "gate-failures",
                    "gate-unavailable", "gate-report-id", "gate-hash", "raw-gate"):

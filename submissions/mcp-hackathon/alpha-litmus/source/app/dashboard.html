@@ -20,29 +20,57 @@
     /* Release-gate judge-first layer: decision first, evidence below. No motion, no hype. */
     #gate{margin:0 0 16px}#when,#agent-examples{margin:0 0 16px}.gate__body{padding:22px;min-width:0}.gate__body h3{margin:18px 0 8px}.gate__body h3:first-child{margin-top:0}.gate__body ul{margin:0 0 12px;padding-left:22px;overflow-wrap:anywhere}.gate__body li{margin-bottom:4px;overflow-wrap:anywhere}.gate__ids{margin:0 0 12px;display:grid;gap:8px}.gate__ids div{display:grid;grid-template-columns:160px minmax(0,1fr);gap:12px}.gate__ids dt{color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.gate__ids dd{margin:0;overflow-wrap:anywhere;word-break:break-all}.warn{color:var(--warn)}.gate__body pre,#agent-examples pre,#usage pre{max-width:100%;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}code{overflow-wrap:anywhere}
     @media(max-width:640px){.gate__body{padding:12px}.gate__ids div{grid-template-columns:minmax(0,1fr)}}
+    /* Product UI layer: calm, judge-first, and compact. Operational data stays
+       monospace; navigation, explanations, and actions use a modern UI stack. */
+    :root{--bg:#071019;--surface:#0d1824;--surface-2:#111f2d;--surface-3:#162636;--line:rgba(148,163,184,.16);--text:#edf4fa;--muted:#91a2b5;--phos:#43d9a3;--phos-dim:#20976f;--warn:#f5bd4f;--alert:#fb7185;--blue:#6aa9ff;--sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{font:15px/1.62 var(--sans);letter-spacing:0;background:radial-gradient(circle at 15% -5%,rgba(67,217,163,.12),transparent 28rem),radial-gradient(circle at 88% 4%,rgba(106,169,255,.1),transparent 30rem),var(--bg)}
+    code,pre,input,textarea,.stat__value,.overview__metric strong,.gate__ids dd{font-family:var(--mono)}
+    header{position:sticky;top:0;z-index:20;max-width:none;padding:14px max(24px,calc((100vw - 1180px)/2));align-items:center;border-bottom:1px solid var(--line);background:rgba(7,16,25,.84);backdrop-filter:blur(18px)}
+    main,footer{max-width:1180px;padding-left:24px;padding-right:24px}.header__brand{text-decoration:none}.mark{border:0;border-radius:10px;background:linear-gradient(145deg,var(--phos),#31bff0);color:#05130e;box-shadow:0 10px 30px rgba(67,217,163,.2)}.brand{color:var(--text);font-family:var(--sans);font-size:17px;letter-spacing:-.01em}.byline{font-weight:500}.header__nav{display:flex;align-items:center;gap:24px}.header__nav a{color:var(--muted);font-size:13px;text-decoration:none}.header__nav a:hover{color:var(--text)}.powered{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);font-family:var(--sans)}
+    .hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:56px;align-items:center;padding:72px 0 48px}.hero__content{min-width:0}.eyebrow{color:var(--phos);font-size:12px;font-weight:700;letter-spacing:.13em}.hero h1{max-width:15ch;margin:14px 0 20px;font-family:var(--sans);font-size:clamp(44px,6vw,72px);line-height:1.01;letter-spacing:-.055em}.hero__copy{max-width:62ch;color:#afbdca;font-size:17px;line-height:1.7}.hero__actions{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 20px}.hero__proof{padding:22px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(160deg,rgba(67,217,163,.07),rgba(13,24,36,.94) 48%);box-shadow:0 24px 80px rgba(0,0,0,.22)}.hero__proof-title{display:flex;align-items:center;gap:9px;margin-bottom:16px;font-size:13px;font-weight:700}.status-dot{width:9px;height:9px;border-radius:50%;background:var(--phos);box-shadow:0 0 0 5px rgba(67,217,163,.1)}.proof-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:13px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.proof-row strong{color:var(--text);font-weight:650;text-align:right}.tag span{border-color:rgba(245,189,79,.25);border-radius:999px;background:rgba(245,189,79,.055);padding:5px 10px;font-family:var(--sans);font-weight:600}.hero__steps{font-family:var(--sans)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:10px 16px;border:1px solid rgba(67,217,163,.42);border-radius:10px;font-family:var(--sans);font-size:12px;font-weight:750;letter-spacing:.025em;text-decoration:none}.btn--primary{border-color:var(--phos);background:var(--phos);color:#04140e;box-shadow:0 12px 32px rgba(67,217,163,.17)}.btn--secondary{border-color:var(--line);background:rgba(255,255,255,.035);color:var(--text)}.btn--quiet{border-color:transparent;color:var(--muted)}
+    .term,.panel{border-color:var(--line);border-radius:18px;background:rgba(13,24,36,.9);box-shadow:0 18px 60px rgba(0,0,0,.16)}.term{overflow:hidden}.term__bar{padding:14px 18px;background:rgba(255,255,255,.025);border-color:var(--line);color:var(--text);font-family:var(--sans);font-weight:700;letter-spacing:0}.term__bar span{display:block;margin-top:2px;color:var(--muted);font-size:12px;font-weight:400}.term__body{padding:18px}.term__body>.toolbar{gap:9px}.term details{padding-top:6px;border-top:1px solid var(--line)}summary{font-family:var(--sans);font-weight:650;color:var(--text)}
+    .status{font-family:var(--sans);font-size:12px;letter-spacing:.02em}.notice{border-radius:12px;background:rgba(245,189,79,.055)}
+    .overview{margin:18px 0;border-color:var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(67,217,163,.045),rgba(13,24,36,.94) 42%)}.overview__head{padding:24px 26px;border-color:var(--line)}.overview__label{color:var(--blue);font-family:var(--sans);font-weight:750}.overview__verdict{margin-top:7px;font-family:var(--sans);font-size:clamp(28px,4.5vw,48px);line-height:1.06;letter-spacing:-.035em}.overview__reason{color:#bac8d4}.verdict-chip{border-radius:999px;background:rgba(255,255,255,.025);font-family:var(--sans);font-weight:700}.overview__metric{padding:16px 20px}.overview__metric span{font-family:var(--sans)}.overview__metric strong{font-size:15px}.gate__body{padding:24px 26px}.gate__body h3{font-family:var(--sans);font-weight:750;color:var(--blue);letter-spacing:.07em}.gate__ids{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}.gate__ids div{display:block;padding:12px 14px;border-bottom:1px solid var(--line)}.gate__ids div:nth-child(odd){border-right:1px solid var(--line)}.gate__ids dt{margin:0 0 4px;font-family:var(--sans)}.gate__ids dd{font-size:12px;word-break:break-word}
+    #gate-decision,#overview-verdict{color:var(--warn)}#gate-decision[data-decision="BLOCK_DEPLOYMENT"],#live-decision[data-decision="BLOCK_DEPLOYMENT"],#recorded-decision[data-decision="BLOCK_DEPLOYMENT"],#overview-verdict[data-decision="FRAGILE"],#overview-verdict[data-decision="INCONSISTENT"]{color:var(--alert)}#gate-decision[data-decision="SURVIVED_BOUNDED_TESTS"],#overview-verdict[data-decision="SURVIVED_TESTS"]{color:var(--phos)}#live-decision,#recorded-decision{font-size:clamp(23px,3.4vw,38px)}#live-nexus:focus,#recorded:focus,#gate:focus{outline:none;box-shadow:0 0 0 2px rgba(67,217,163,.45),0 18px 60px rgba(0,0,0,.16)}
+    .evidence-details{margin:0}.evidence-details>summary{display:flex;justify-content:space-between;gap:18px;padding:15px 26px;border-top:1px solid var(--line);color:var(--text);list-style:none}.evidence-details>summary::-webkit-details-marker{display:none}.evidence-details>summary::after{content:'+';color:var(--phos);font-size:20px;line-height:1}.evidence-details[open]>summary::after{content:'−'}.evidence-details>summary span{color:var(--muted);font-size:12px;font-weight:400}.evidence-details>.gate__body{border-top:1px solid var(--line)}
+    .context-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:18px;margin:18px 0}.context-grid .panel{margin:0}.contract-intro{color:var(--muted)}.contract-details{margin-top:16px}.contract-details>summary{padding:10px 0;color:var(--phos)}
+    .deep-evidence{margin:20px 0;border:1px solid var(--line);border-radius:18px;background:rgba(13,24,36,.7);overflow:hidden}.deep-evidence>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;padding:20px 24px;list-style:none}.deep-evidence>summary::-webkit-details-marker{display:none}.deep-evidence>summary strong{font-size:16px}.deep-evidence>summary span{color:var(--muted);font-size:13px;font-weight:400}.deep-evidence>summary::after{content:'View';align-self:center;color:var(--phos);font-size:12px}.deep-evidence[open]>summary::after{content:'Hide'}.deep-evidence .report-nav{padding:0 24px 18px}.deep-evidence #report{padding:0 18px 18px}.report-nav a{color:var(--muted);text-decoration:none}.report-nav a:hover{color:var(--phos)}
+    .panel h2{font-family:var(--sans);font-weight:750;color:var(--text)}.cards{border-radius:12px;overflow:hidden}pre{border-radius:10px;background:#07111b}.viz{background:rgba(13,24,36,.88)}footer{font-family:var(--sans)}
+    @media(max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:28px;padding:52px 0 38px}.hero__proof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.hero__proof-title{grid-column:1/-1}.context-grid{grid-template-columns:minmax(0,1fr)}.header__nav{gap:14px}}
+    @media(max-width:640px){header,main,footer{padding-left:16px;padding-right:16px}.header__nav{width:100%;justify-content:space-between}.powered{display:none}.hero{padding:40px 0 30px}.hero h1{font-size:clamp(40px,12vw,54px)}.hero__copy{font-size:16px}.hero__actions{display:grid}.hero__proof{grid-template-columns:minmax(0,1fr)}.hero__proof-title{grid-column:auto}.term__body{padding:14px}.overview__head{padding:20px}.overview__verdict{font-size:30px}.gate__body{padding:18px}.gate__ids{grid-template-columns:minmax(0,1fr)}.gate__ids div:nth-child(odd){border-right:0}.evidence-details>summary{padding:14px 18px}.evidence-details>summary span{display:none}.deep-evidence>summary{grid-template-columns:minmax(0,1fr) auto;padding:17px}.deep-evidence>summary span{display:none}.deep-evidence #report{padding:0 10px 10px}.deep-evidence .report-nav{padding:0 16px 16px}.toolbar{display:grid}.btn{width:100%}}
   </style>
 </head>
 <body>
   <a class="skip" href="#gate">Skip to release decision</a>
-  <header><div class="header__brand"><div class="mark" aria-hidden="true">A</div><div class="brand">AlphaLitmus <span class="byline">by SKLab</span></div></div><div class="powered">Powered by <strong>OlaXBT Nexus</strong></div></header>
+  <header><a class="header__brand" href="/" aria-label="AlphaLitmus home"><div class="mark" aria-hidden="true">A</div><div class="brand">AlphaLitmus <span class="byline">by SKLab</span></div></a><nav class="header__nav" aria-label="Primary"><a href="#live-nexus">Live check</a><a href="#gate">Decision</a><a href="/docs">API docs</a></nav><div class="powered">Powered by <strong>OlaXBT Nexus</strong></div></header>
   <main>
     <div class="hero">
-      <div class="eyebrow">AlphaLitmus · Strategy Release Gate for Agents</div>
-      <h1>Strategy Release Gate for Agents</h1>
-      <p class="hero__copy">Test a strategy before an agent deploys or scales it. AlphaLitmus finds bounded cost, delay, regime, parameter, and evidence failures—then returns a reproducible decision.</p>
-      <div class="tag" aria-label="Safety constraints"><span>Paper research</span><span>No order execution</span><span>No wallet</span></div>
-      <ol class="hero__steps" aria-label="Release-gate workflow"><li><span>01</span>Run safe release-gate demo</li><li><span>02</span>Read the release decision first</li><li><span>03</span>Export reproducible evidence</li></ol>
+      <div class="hero__content">
+        <div class="eyebrow">Evidence infrastructure for trading agents</div>
+        <h1>Know when a strategy should not ship.</h1>
+        <p class="hero__copy">Test a strategy before an agent deploys or scales it. AlphaLitmus challenges costs, delays, regimes, parameters, and source evidence—then returns a verified, reproducible release decision.</p>
+        <div class="hero__actions"><a class="btn btn--primary" href="#live-nexus">Run live Nexus check</a><a class="btn btn--secondary" href="#gate">See release decision</a></div>
+        <div class="tag" aria-label="Safety constraints"><span>Paper research</span><span>No order execution</span><span>No wallet access</span></div>
+      </div>
+      <aside class="hero__proof" aria-label="Production capability summary">
+        <div class="hero__proof-title"><span class="status-dot" aria-hidden="true"></span>Production service online</div>
+        <div class="proof-row"><span>Live evidence</span><strong>4 Nexus surfaces</strong></div>
+        <div class="proof-row"><span>Agent interface</span><strong>REST + 8 MCP tools</strong></div>
+        <div class="proof-row"><span>Decision policy</span><strong>Fail closed</strong></div>
+        <div class="proof-row"><span>Execution</span><strong>Paper only</strong></div>
+      </aside>
     </div>
     <section class="term" aria-labelledby="controls-title">
-      <div class="term__bar" id="controls-title">INPUT://RELEASE-GATE</div>
+      <div class="term__bar" id="controls-title">Evaluation workspace <span>Choose live evidence, recorded proof, or a safe synthetic example.</span></div>
       <div class="term__body">
         <div class="toolbar">
-          <button class="btn btn--primary" id="mixed" type="button">Run safe release-gate demo</button>
-          <button class="btn" id="shock" type="button">[ Run shock test ]</button>
-          <button class="btn" id="run-live-nexus" type="button">Run live Nexus check →</button>
-          <button class="btn" id="replay-recorded" type="button">Replay real Nexus evidence →</button>
-          <button class="btn" id="copy" type="button" disabled>[ Copy JSON ]</button>
-          <button class="btn" id="download" type="button" disabled>[ Export report JSON ]</button>
+          <button class="btn btn--primary" id="run-live-nexus" type="button">Run live Nexus check</button>
+          <button class="btn btn--secondary" id="replay-recorded" type="button">Replay real Nexus evidence</button>
+          <button class="btn btn--quiet" id="mixed" type="button">Run safe release-gate demo</button>
+          <button class="btn btn--quiet" id="shock" type="button">Run shock test</button>
+          <button class="btn btn--quiet" id="copy" type="button" disabled>Copy JSON</button>
+          <button class="btn btn--quiet" id="download" type="button" disabled>Export report JSON</button>
           <a href="/docs">REST API docs</a>
         </div>
         <details>
@@ -103,7 +131,9 @@
         <div class="verdict-chip" id="live-source">Live source not checked</div>
       </div>
       <div class="overview__metrics" id="live-metrics"></div>
-      <div class="gate__body">
+      <details class="evidence-details" id="live-details">
+        <summary>Live evidence details <span>Identity, freshness, failures, and export</span></summary>
+        <div class="gate__body">
         <p id="live-disclosure" class="muted">A live pulse is evidence freshness, not trading authorization, source authentication, or proof of future profitability.</p>
         <div id="live-status" class="status" role="status" aria-live="polite">Awaiting live check.</div>
         <div id="live-error" class="notice error" role="alert" hidden></div>
@@ -125,7 +155,8 @@
           <button class="btn" id="download-live" type="button" disabled>Download live result</button>
         </div>
         <details><summary>Inspect complete live result JSON</summary><pre id="raw-live" tabindex="0">Unavailable / no live result yet.</pre></details>
-      </div>
+        </div>
+      </details>
     </section>
     <section class="panel overview" id="recorded" aria-labelledby="recorded-title" tabindex="-1">
       <div class="overview__head">
@@ -133,7 +164,9 @@
         <div class="verdict-chip" id="recorded-source">Source unavailable</div>
       </div>
       <div class="overview__metrics" id="recorded-metrics"></div>
-      <div class="gate__body">
+      <details class="evidence-details" id="recorded-details">
+        <summary>Recorded evidence details <span>Identity, integrity, decision, and limitations</span></summary>
+        <div class="gate__body">
         <p id="recorded-disclosure" class="muted">Recorded historical Nexus evidence — not a live market call and not evidence of future profitability.</p>
         <div id="recorded-status" class="status" role="status" aria-live="polite">Awaiting recorded replay.</div>
         <div id="recorded-error" class="notice error" role="alert" hidden></div>
@@ -158,8 +191,10 @@
           <button class="btn" id="download-recorded" type="button" disabled>Download certificate/report</button>
         </div>
         <details><summary>Inspect complete recorded replay JSON</summary><pre id="raw-recorded" tabindex="0">Unavailable / no recorded replay yet.</pre></details>
-      </div>
+        </div>
+      </details>
     </section>
+    <div class="context-grid">
     <section class="panel" id="when" aria-labelledby="when-title">
       <h2 id="when-title">When should an agent call this?</h2>
       <ul>
@@ -172,6 +207,8 @@
     </section>
     <section class="panel wide" id="agent-examples" aria-labelledby="agent-examples-title">
       <h2 id="agent-examples-title">Agent call contract / copyable examples</h2>
+      <p class="contract-intro">One strict release-gate contract across REST and MCP, with verified source reports and bounded decisions.</p>
+      <details class="contract-details"><summary>View REST, MCP, and response examples</summary>
       <h3>REST call</h3>
       <pre tabindex="0">POST /v1/release-gate
 Content-Type: application/json
@@ -190,8 +227,9 @@ Content-Type: application/json
   "no_execution": true,
   "profitability_claimed": false
 }</pre>
-      <p class="muted">Primary MCP tool: <code>evaluate_strategy_release</code>. Existing tools remain available. SURVIVED_BOUNDED_TESTS means only survival of the stated bounded tests, not deployment approval.</p>
+      <p class="muted">Primary MCP tool: <code>evaluate_strategy_release</code>. Existing tools remain available. SURVIVED_BOUNDED_TESTS means only survival of the stated bounded tests, not deployment approval.</p></details>
     </section>
+    </div>
     <section class="panel overview" id="overview" aria-labelledby="overview-title">
       <div class="overview__head">
         <div><div class="overview__label" id="overview-title">Current falsification result</div><div class="overview__verdict" id="overview-verdict">AWAITING REPORT</div><p class="overview__reason" id="overview-reason">Run the judge demo to generate a bounded, evidence-labeled result.</p></div>
@@ -204,6 +242,8 @@ Content-Type: application/json
         <figure class="viz"><figcaption>Parameter sensitivity / return %</figcaption><div class="heatmap" id="sensitivity-chart"></div><p class="chart-note">Local neighborhood, not optimization advice.</p></figure>
       </div>
     </section>
+    <details class="deep-evidence">
+      <summary><strong>Deep evidence report</strong><span>11 reproducible sections · metrics, stress tests, certificate, and provenance</span></summary>
     <nav class="report-nav" aria-label="Report sections">
       <div class="report-nav__label">Deep evidence / 11 sections</div>
       <a href="#strategy">01 Evidence</a><a href="#verdict">02 Verdict</a><a href="#metrics">03 Metrics</a><a href="#claims">04 Claims</a><a href="#stress">05 Stress</a><a href="#frontier">06 Frontier</a><a href="#boundary">07 Boundary</a><a href="#certificate">08 Certificate</a><a href="#provenance">09 Provenance</a><a href="#limitations">10 Limitations</a><a href="#usage">11 Export / usage</a>
@@ -244,6 +284,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         <p>All page assets are local. Demo and import requests go to this origin; explicit Nexus mode may cause the server to contact Nexus. Opening this HTML as a file is not sufficient: serve it through the application.</p>
       </section>
     </div>
+    </details>
   </main>
   <footer>AlphaLitmus by SKLab · Powered by OlaXBT Nexus. Historical results do not establish a future edge. A hash is an integrity identifier, not proof of source authenticity. No investment advice or automatic promotion to live trading.</footer>
   <noscript><p class="notice">JavaScript is required to request and inspect reports. REST API documentation is available at /docs.</p></noscript>
@@ -376,6 +417,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     function clearGate(message) {
       gate = null;
       $('gate-decision').textContent = 'AWAITING DECISION';
+      $('gate-decision').removeAttribute('data-decision');
       $('gate-action').textContent = message;
       $('gate-source').textContent = 'Source unavailable';
       $('gate-why').textContent = message;
@@ -389,6 +431,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     }
     function renderGate(g) {
       $('gate-decision').textContent = g.decision;
+      $('gate-decision').dataset.decision = g.decision;
       $('gate-action').textContent = 'Recommended action: ' + g.recommended_action + ' / Source verdict: ' + g.source_verdict;
       $('gate-source').textContent = 'Source: ' + g.source_verdict + ' / ' + g.evidence_classification;
       const reasons = list(g.reason_codes);
@@ -426,6 +469,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       sections.forEach(id => body(id).replaceChildren(element('p', message, 'empty')));
       $('raw-report').textContent = message;
       $('overview-verdict').textContent = 'AWAITING REPORT';
+      $('overview-verdict').removeAttribute('data-decision');
       $('overview-reason').textContent = message;
       $('overview-eligible').textContent = 'Eligibility unavailable';
       $('overview-eligible').dataset.eligible = 'false';
@@ -450,6 +494,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
             : 'DATA KIND UNAVAILABLE / Do not treat this report as historical or live performance evidence.';
 
       $('overview-verdict').textContent = r.verdict;
+      $('overview-verdict').dataset.decision = String(r.verdict || 'UNAVAILABLE');
       $('overview-reason').textContent = list(r.observed_failures)[0] || list(r.reason_codes)[0] || 'No explicit failure was returned; this is not proof of an edge.';
       $('overview-eligible').textContent = r.eligible === true ? 'Eligible under bounded tests' : r.eligible === false ? 'Not eligible' : 'Eligibility unavailable';
       $('overview-eligible').dataset.eligible = String(r.eligible === true);
@@ -648,7 +693,9 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     function clearLive(message, state = 'UNAVAILABLE', placeholder = 'Unavailable') {
       liveResult = null;
       setLiveButtons(false);
+      $('live-details').open = state === 'UNAVAILABLE';
       $('live-decision').textContent = 'LIVE NEXUS / ' + state;
+      $('live-decision').removeAttribute('data-decision');
       $('live-action').textContent = message;
       $('live-source').textContent = state === 'READY TO CHECK' ? 'Live source not requested yet' : (state === 'CHECKING' ? 'Live request in progress' : 'Live source unavailable');
       ['live-strategy', 'live-strategy-id', 'live-symbol', 'live-fetched', 'live-surfaces', 'live-freshness', 'live-cache', 'live-report-id'].forEach(id => { $(id).textContent = placeholder; });
@@ -658,7 +705,9 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     }
     function renderLive(result) {
       const currentGate = object(result.release_gate) ? result.release_gate : {};
+      $('live-details').open = true;
       $('live-decision').textContent = 'LIVE NEXUS / ' + String(currentGate.decision || 'UNAVAILABLE');
+      $('live-decision').dataset.decision = String(currentGate.decision || 'UNAVAILABLE');
       $('live-action').textContent = 'Recommended action: ' + String(currentGate.recommended_action || 'Unavailable') + ' / Source verdict: ' + String(currentGate.source_verdict || 'Unavailable');
       $('live-source').textContent = 'LIVE / ' + String(result.source || 'source unavailable');
       $('live-strategy').textContent = result.strategy_name || unavailable;
@@ -749,19 +798,15 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     function setRecordedButtons(enabled) {
       ['copy-recorded', 'download-recorded'].forEach(id => { const node = $(id); if (node) node.disabled = !enabled; });
     }
-    function clearRecorded(message) {
+    function clearRecorded(message, state = 'UNAVAILABLE', placeholder = 'Unavailable') {
       recorded = null;
       setRecordedButtons(false);
-      $('recorded-decision').textContent = 'RECORDED NEXUS EVIDENCE / UNAVAILABLE';
+      $('recorded-details').open = state === 'UNAVAILABLE';
+      $('recorded-decision').textContent = 'RECORDED NEXUS EVIDENCE / ' + state;
+      $('recorded-decision').removeAttribute('data-decision');
       $('recorded-action').textContent = message;
-      $('recorded-source').textContent = 'Source unavailable';
-      $('recorded-strategy').textContent = 'Unavailable';
-      $('recorded-strategy-id').textContent = 'Unavailable';
-      $('recorded-run').textContent = 'Unavailable';
-      $('recorded-captured').textContent = 'Unavailable';
-      $('recorded-surfaces').textContent = 'Unavailable';
-      $('recorded-integrity').textContent = 'Unavailable';
-      $('recorded-report-id').textContent = 'Unavailable';
+      $('recorded-source').textContent = state === 'READY TO REPLAY' ? 'Recorded source not replayed yet' : (state === 'CHECKING' ? 'Recorded replay in progress' : 'Source unavailable');
+      ['recorded-strategy', 'recorded-strategy-id', 'recorded-run', 'recorded-captured', 'recorded-surfaces', 'recorded-integrity', 'recorded-report-id'].forEach(id => { $(id).textContent = placeholder; });
       $('recorded-failures').replaceChildren(element('li', message));
       $('recorded-symbols').textContent = message;
       $('recorded-limitations').replaceChildren(element('li', message));
@@ -771,11 +816,13 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     }
     function renderRecorded(r) {
       const gate = object(r.release_gate) ? r.release_gate : {};
+      $('recorded-details').open = true;
       const inner = object(gate.report) ? gate.report : {};
       const rec = object(inner.reconciliation) ? inner.reconciliation : null;
       const checks = rec && object(rec.result) ? list(rec.result.results) : [];
       const tradeSymbols = checks.find(c => c && c.code === 'TRADE_SYMBOLS');
       $('recorded-decision').textContent = 'RECORDED NEXUS EVIDENCE / ' + String(gate.decision || 'UNAVAILABLE');
+      $('recorded-decision').dataset.decision = String(gate.decision || 'UNAVAILABLE');
       $('recorded-action').textContent = 'Recommended action: ' + String(gate.recommended_action || 'Unavailable') + ' / Source verdict: ' + String(gate.source_verdict || 'Unavailable');
       $('recorded-source').textContent = 'Source: ' + String(gate.source_verdict || 'unavailable') + ' / ' + String(gate.evidence_classification || r.snapshot_id || 'unavailable');
       $('recorded-strategy').textContent = r.strategy_name || unavailable;
@@ -811,7 +858,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       $('recorded-status').textContent = 'REQUESTING / recorded Nexus evidence replay';
       $('recorded-error').hidden = true;
       $('recorded-error').textContent = '';
-      clearRecorded('Unavailable / recorded replay in progress. Previous result cleared.');
+      clearRecorded('Replaying the verified historical snapshot through the release gate.', 'CHECKING', 'Pending');
       let timedOut = false;
       const active = new AbortController();
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
@@ -847,6 +894,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       } catch (error) {
         if (current !== recordedSequence) return;
         clearRecorded('Unavailable / recorded replay failed. No replay is claimed.');
+        $('recorded-details').open = true;
         $('recorded-status').textContent = 'REPLAY UNAVAILABLE / recorded snapshot unavailable / export disabled';
         $('recorded-error').textContent = 'RECORDED REPLAY UNAVAILABLE / ' + (timedOut ? 'Timed out after 120 seconds.' : (error && error.message) || String(error));
         $('recorded-error').hidden = false;
@@ -888,7 +936,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     const downloadRecordedButton = $('download-recorded');
     if (downloadRecordedButton) downloadRecordedButton.addEventListener('click', downloadRecorded);
     clearLive('Select Run live Nexus check to fetch current evidence.', 'READY TO CHECK', 'Not checked yet');
-    clearRecorded('Unavailable / awaiting recorded replay. Select Replay real Nexus evidence.');
+    clearRecorded('Select Replay verified evidence to inspect the historical snapshot.', 'READY TO REPLAY', 'Not replayed yet');
     clearReport('Unavailable / awaiting current release-gate result.');
     load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed');
   </script>
