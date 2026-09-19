@@ -1,5 +1,7 @@
 # AlphaLitmus verification evidence
 
+**Track:** OlaXBT × X-Agent Trading Challenge
+
 ## Prerequisites
 
 - Review commit: `dc12a131aa454a8573a186cc234662bb8e03a437`

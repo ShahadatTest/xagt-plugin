@@ -1,8 +1,11 @@
 # AlphaLitmus
 
+**Track:** OlaXBT × X-Agent Trading Challenge
+
 ## Capability
 
 - **One-line description:** Give agents a verified release decision before they deploy or scale a trading strategy, backed by bounded falsification tests and a replayable evidence certificate.
+- **Trading-track qualification:** AlphaLitmus was built around named OlaXBT Nexus strategies and completed backtest runs. It reconciles Nexus signal, metrics, equity, and recent-trade evidence into a fail-closed release decision; it is not a strategy-only, backtest-only, or simple API-wrapper submission.
 - **Who it helps:** Trading agents, strategy researchers, and reviewers who need to challenge a strategy before capital is exposed.
 - **Capability boundary:** AlphaLitmus replays a fixed reference strategy against costs, execution delay, chronological folds, parameter perturbations, bootstrap diagnostics, and market regimes. It can also reconcile separately authorized OlaXBT Nexus evidence and can optionally request bounded Nexus backtest windows, but the public review deployment keeps all Nexus access disabled. It never places orders, signs wallets, predicts profit, promotes a strategy to live trading, or treats a synthetic fixture as market evidence.
 
