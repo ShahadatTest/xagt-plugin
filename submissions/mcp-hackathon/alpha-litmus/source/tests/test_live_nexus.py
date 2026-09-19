@@ -307,4 +307,7 @@ def test_dashboard_exposes_fail_closed_live_pulse() -> None:
     assert "result.recorded_fallback_used !== false" in html
     assert "currentGate.source_report_verified !== true" in html
     assert "if (!liveResult || !object(liveResult.release_gate)" in html
+    assert "'READY TO CHECK', 'Not checked yet'" in html
+    assert "'CHECKING', 'Pending'" in html
+    assert "Unavailable / awaiting live Nexus check" not in html
     assert ".innerHTML" not in html

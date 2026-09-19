@@ -645,13 +645,13 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     function setLiveButtons(enabled) {
       ['copy-live', 'download-live'].forEach(id => { const node = $(id); if (node) node.disabled = !enabled; });
     }
-    function clearLive(message) {
+    function clearLive(message, state = 'UNAVAILABLE', placeholder = 'Unavailable') {
       liveResult = null;
       setLiveButtons(false);
-      $('live-decision').textContent = 'LIVE NEXUS / UNAVAILABLE';
+      $('live-decision').textContent = 'LIVE NEXUS / ' + state;
       $('live-action').textContent = message;
-      $('live-source').textContent = 'Live source unavailable';
-      ['live-strategy', 'live-strategy-id', 'live-symbol', 'live-fetched', 'live-surfaces', 'live-freshness', 'live-cache', 'live-report-id'].forEach(id => { $(id).textContent = 'Unavailable'; });
+      $('live-source').textContent = state === 'READY TO CHECK' ? 'Live source not requested yet' : (state === 'CHECKING' ? 'Live request in progress' : 'Live source unavailable');
+      ['live-strategy', 'live-strategy-id', 'live-symbol', 'live-fetched', 'live-surfaces', 'live-freshness', 'live-cache', 'live-report-id'].forEach(id => { $(id).textContent = placeholder; });
       $('live-failures').replaceChildren(element('li', message));
       $('raw-live').textContent = message;
       $('live-metrics').replaceChildren();
@@ -687,7 +687,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       $('live-status').textContent = 'REQUESTING / fixed Candidate v1 / four read-only Nexus surfaces';
       $('live-error').hidden = true;
       $('live-error').textContent = '';
-      clearLive('Unavailable / live request in progress. Previous live result cleared.');
+      clearLive('Fetching current evidence from four read-only Nexus surfaces.', 'CHECKING', 'Pending');
       let timedOut = false;
       const active = new AbortController();
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 45000);
@@ -887,7 +887,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     if (copyRecordedButton) copyRecordedButton.addEventListener('click', copyRecorded);
     const downloadRecordedButton = $('download-recorded');
     if (downloadRecordedButton) downloadRecordedButton.addEventListener('click', downloadRecorded);
-    clearLive('Unavailable / awaiting live Nexus check. Select Run live Nexus check.');
+    clearLive('Select Run live Nexus check to fetch current evidence.', 'READY TO CHECK', 'Not checked yet');
     clearRecorded('Unavailable / awaiting recorded replay. Select Replay real Nexus evidence.');
     clearReport('Unavailable / awaiting current release-gate result.');
     load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed');

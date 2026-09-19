@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- Review commit: `3a726282d58fbe047b0e68e736e45ed0d82778ea`
+- Review commit: `a3ccd1683abfcc7afe4eabfb406207662f8c58fc`
 - API base URL: `https://alphalitmus.sklab.cc`
 - Authentication: None for the public review routes. The live route is locked to fixed Candidate v1; arbitrary Nexus reads and remote compute remain disabled.
 - Tool: `curl`
@@ -20,7 +20,7 @@ curl --fail --silent --show-error https://alphalitmus.sklab.cc/health
 Expected response:
 
 ```json
-{"commit":"3a726282d58fbe047b0e68e736e45ed0d82778ea","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"a3ccd1683abfcc7afe4eabfb406207662f8c58fc","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ## 2. Deployment proof
@@ -32,7 +32,7 @@ curl --fail --silent --show-error https://alphalitmus.sklab.cc/.well-known/xagen
 Expected response:
 
 ```json
-{"commit":"3a726282d58fbe047b0e68e736e45ed0d82778ea","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"a3ccd1683abfcc7afe4eabfb406207662f8c58fc","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ## 3. Real capability call
