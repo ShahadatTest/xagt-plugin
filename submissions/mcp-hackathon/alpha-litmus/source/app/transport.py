@@ -24,6 +24,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app.contracts import ChallengeRequest, ReleaseGateResult, Report, StrictModel
 from app.lab import challenge
 from app.nexus import read_nexus
+from app.recorded_nexus import RecordedNexusReplay
 from app.release_gate import project
 from app.nexus_compute import (
     NexusComputeError, WindowEvidence, WindowExperimentReport, WindowExperimentRequest, run_window_experiment,
@@ -236,6 +237,28 @@ async def run_release_gate(request: ChallengeRequest) -> ReleaseGateResult:
             return project(challenge(request, evidence))
 
         return await anyio.to_thread.run_sync(_evaluate, abandon_on_cancel=False)
+
+
+async def run_recorded_replay() -> RecordedNexusReplay:
+    """Shared recorded-evidence replay path for REST and MCP.
+
+    Calls the same verified replay function with no network access and no
+    caller-selected snapshot. Fails closed with bounded public codes.
+    """
+    from app.recorded_nexus import RecordedEvidenceError, replay_recorded_nexus_evidence
+
+    async with admission.slot():
+        def _replay() -> RecordedNexusReplay:
+            return replay_recorded_nexus_evidence()
+
+        try:
+            return await anyio.to_thread.run_sync(_replay, abandon_on_cancel=False)
+        except RecordedEvidenceError as exc:
+            if exc.code == "RECORDED_EVIDENCE_UNAVAILABLE":
+                raise TransportError(503, exc.code) from None
+            if exc.code == "RECORDED_EVIDENCE_INTEGRITY_FAILED":
+                raise TransportError(500, exc.code) from None
+            raise TransportError(500, "RECORDED_EVIDENCE_INVALID") from None
 
 
 async def run_window_compute(request: WindowExperimentRequest) -> WindowExperimentReport:

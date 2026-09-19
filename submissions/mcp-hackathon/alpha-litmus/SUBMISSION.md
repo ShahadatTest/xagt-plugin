@@ -7,7 +7,7 @@
 - **One-line description:** Give agents a verified release decision before they deploy or scale a trading strategy, backed by bounded falsification tests and a replayable evidence certificate.
 - **Trading-track qualification:** AlphaLitmus was built around named OlaXBT Nexus strategies and completed backtest runs. It reconciles Nexus signal, metrics, equity, and recent-trade evidence into a fail-closed release decision; it is not a strategy-only, backtest-only, or simple API-wrapper submission.
 - **Who it helps:** Trading agents, strategy researchers, and reviewers who need to challenge a strategy before capital is exposed.
-- **Capability boundary:** AlphaLitmus replays a fixed reference strategy against costs, execution delay, chronological folds, parameter perturbations, bootstrap diagnostics, and market regimes. It can also reconcile separately authorized OlaXBT Nexus evidence and can optionally request bounded Nexus backtest windows, but the public review deployment keeps all Nexus access disabled. It never places orders, signs wallets, predicts profit, promotes a strategy to live trading, or treats a synthetic fixture as market evidence.
+- **Capability boundary:** AlphaLitmus replays a fixed reference strategy against costs, execution delay, chronological folds, parameter perturbations, bootstrap diagnostics, and market regimes. It also replays a sanitized, integrity-checked historical snapshot captured from four read-only OlaXBT Nexus surfaces, and can optionally request bounded Nexus backtest windows. The public deployment keeps live Nexus access disabled. It never places orders, signs wallets, predicts profit, promotes a strategy to live trading, or treats a synthetic fixture as market evidence.
 
 ## Live API
 
@@ -15,26 +15,26 @@
 - **Health-check URL:** https://alphalitmus.sklab.cc/health
 - **Authentication:** None for the public safe-mode review deployment. Nexus reads and remote backtest compute are disabled.
 - **Rate limits / known limits:** JSON bodies are limited to 4,000,000 bytes and depth 32. Each process admits at most eight intake requests and two expensive operations; body receipt has a 10-second deadline. Reviewers should avoid load testing.
-- **API contract:** Interactive OpenAPI is at https://alphalitmus.sklab.cc/docs, the machine-readable contract is at https://alphalitmus.sklab.cc/openapi.json, and the implementation is in `source/app/`. A local stdio MCP server exposes six tools documented in `source/README.md`; the primary agent tool is `evaluate_strategy_release`.
+- **API contract:** Interactive OpenAPI is at https://alphalitmus.sklab.cc/docs, the machine-readable contract is at https://alphalitmus.sklab.cc/openapi.json, and the implementation is in `source/app/`. A local stdio MCP server exposes seven tools documented in `source/README.md`; the primary agent tool is `evaluate_strategy_release`, and `replay_recorded_nexus_evidence` provides credential-free historical Nexus replay.
 
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/ShahadatTest/alpha-litmus
-- **Review commit:** `dc12a131aa454a8573a186cc234662bb8e03a437`
+- **Review commit:** `dd4f2e85f1c77435793012d6f52738952566e341`
 - **Source submitted in this PR:** `source/`
 - **Run tests:** `python -m pip install -r requirements-dev.txt && python -m pytest -q && python -m ruff check . && python -m mypy app`
 - **Run locally:** `python -m pip install -r requirements.txt && python -m uvicorn app.main:app --host 127.0.0.1 --port 8040`
-- **Deploy:** `docker build --build-arg ALPHALITMUS_COMMIT=dc12a131aa454a8573a186cc234662bb8e03a437 -t alpha-litmus .` followed by a hardened container run with `ALPHALITMUS_ENV=production`; the exact production controls are in `source/docs/VPS-DEPLOYMENT.md`.
+- **Deploy:** `docker build --build-arg ALPHALITMUS_COMMIT=dd4f2e85f1c77435793012d6f52738952566e341 -t alpha-litmus .` followed by a hardened container run with `ALPHALITMUS_ENV=production`; the exact production controls are in `source/docs/VPS-DEPLOYMENT.md`.
 - **Version binding:** The image is built from `git archive` of the review commit with the same commit passed as `ALPHALITMUS_COMMIT`. Both public health and same-origin proof expose it. The response also states that syntax is not independent build attestation.
 
 The deployed API exposes:
 
 ```json
-{"commit":"dc12a131aa454a8573a186cc234662bb8e03a437","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"dd4f2e85f1c77435793012d6f52738952566e341","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ```json
-{"commit":"dc12a131aa454a8573a186cc234662bb8e03a437","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"dd4f2e85f1c77435793012d6f52738952566e341","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ## Verification
@@ -43,6 +43,7 @@ The exact public calls, expected invariants, and safe failure behavior are in `v
 
 - **Health-check result:** Public HTTPS returns HTTP 200, `status: ok`, and the exact review commit.
 - **Capability call:** `GET /v1/release-gate/demo/mixed` performs the complete bounded synthetic challenge, verifies its source certificate, and projects it into the strict agent-facing release contract. The verified public run returned `INSUFFICIENT_EVIDENCE` with `COLLECT_MORE_EVIDENCE`, `source_report_verified: true`, and the complete authoritative report instead of claiming a profitable edge.
+- **Recorded Nexus evidence:** `GET /v1/nexus/replay/candidate-v1` performs zero live network calls and replays the checked-in sanitized snapshot from signal, metrics, equity, and recent trades. The public result is `INCONSISTENT`, `BLOCK_DEPLOYMENT`, `DO_NOT_DEPLOY`, and `TRADE_SYMBOLS MISMATCH`, with aggregate snapshot hash `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8` and `source_report_verified: true`.
 - **Expected error behavior:** A schema-invalid challenge such as `{}` returns HTTP 422 with the bounded body `{"detail":"INVALID_REQUEST"}`. Missing Nexus access returns an evidence-labelled unavailable result; it is not converted into validation.
 
 ## Security and data handling

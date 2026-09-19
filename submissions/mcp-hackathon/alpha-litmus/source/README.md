@@ -30,9 +30,10 @@ Runtime-only installs use `requirements.txt`, which includes the MCP SDK. Open `
 | --- | --- | --- |
 | `GET /health` | None | Status, service, commit, reviewability and provenance caveat |
 | `GET /.well-known/xagent-verification.json` | None | Schema version, slug and commit claim |
-| `GET /v1/capabilities` | None | Six tool names, `opt_in_nexus_backtest_compute` side effect, Nexus read switch and transport limits |
+| `GET /v1/capabilities` | None | Seven tool names, `opt_in_nexus_backtest_compute` side effect, Nexus read switch and transport limits |
 | `GET /v1/release-gate/demo/mixed` or `/v1/release-gate/demo/shock` | None | Synthetic `ReleaseGateResult` (`INSUFFICIENT_EVIDENCE`); embeds the complete `Report` as `report` |
 | `POST /v1/release-gate` | Direct `ChallengeRequest` | Strict `ReleaseGateResult` with decision, action, `source_report_verified: true`, and complete `report`; invalid source certificates fail closed with sanitized `REPORT_VERIFICATION_FAILED` |
+| `GET /v1/nexus/replay/candidate-v1` | None | Recorded historical Nexus replay (`alphalitmus-recorded-replay-1`); no key required; unavailable without production snapshot |
 | `GET /v1/demo/mixed` or `/v1/demo/shock` | None | Complete synthetic `Report`; replay input is `report.request` |
 | `POST /v1/challenge` | Direct `ChallengeRequest` | Complete current `Report` |
 | `POST /v1/find-failure-boundary` | Direct `ChallengeRequest` | Same complete report, including per-dimension boundaries |
@@ -99,6 +100,7 @@ Run `python -m app.mcp_server` with this directory as the MCP host's working dir
 | `verify_failure_certificate` | `{"report": <Report>}` | Verification result |
 | `get_demo_fixture` | `{"scenario":"mixed"}` or `{"scenario":"shock"}`; default mixed | Complete synthetic `Report` |
 | `run_nexus_window_stability` | `{"request": <WindowExperimentRequest>}` | Separate window report; remote backtest compute side effect, not trading |
+| `replay_recorded_nexus_evidence` | `{}` (strict empty, extra forbid) | Recorded historical replay; same `RecordedNexusReplay` as REST; no key, no network |
 
 Angle-bracket entries in this table are schema placeholders, not literal JSON. The primary no-key call is:
 
@@ -108,7 +110,29 @@ Angle-bracket entries in this table are schema placeholders, not literal JSON. T
 
 For reference mode, pass the demo report's `request` as `arguments.request`; do not put the whole report inside `research`. Both challenge tools and the primary release-gate tool require the outer `request`; flattened candle arguments are invalid. REST (`POST /v1/release-gate`) and MCP (`evaluate_strategy_release`) share `app.transport.run_release_gate` and the same decision mapping. Successful release-gate decisions are only issued from a source certificate accepted by the existing `verify_report`; otherwise both surfaces return only the sanitized `REPORT_VERIFICATION_FAILED` code. Verification replays the bounded reference/reconciliation calculations, so a release-gate call costs roughly one challenge plus one verification replay. Unknown arguments are rejected rather than coerced/ignored. Raw stdio frames are bounded to 4,000,000 bytes before SDK decoding; malformed, duplicate-key or oversized frames close the session without trusting their request ID. Tool failures use sanitized errors.
 
-The primary release-gate tool plus the original four tools retain read-only behavior and backward-compatible argument wrappers. They are annotated `readOnlyHint=true`, `destructiveHint=false`, `idempotentHint=true` (primary: `openWorldHint=true`). The sixth tool (`run_nexus_window_stability`) is annotated `readOnlyHint=false`, `idempotentHint=false`, `destructiveHint=false`, `openWorldHint=true`: it starts remote backtests, not trades. Do not automatically retry it.
+The primary release-gate tool plus the original four tools retain read-only behavior and backward-compatible argument wrappers. They are annotated `readOnlyHint=true`, `destructiveHint=false`, `idempotentHint=true` (primary: `openWorldHint=true`). The sixth tool (`run_nexus_window_stability`) is annotated `readOnlyHint=false`, `idempotentHint=false`, `destructiveHint=false`, `openWorldHint=true`: it starts remote backtests, not trades. Do not automatically retry it. The seventh tool (`replay_recorded_nexus_evidence`) is annotated `readOnlyHint=true`, `destructiveHint=false`, `idempotentHint=true`, `openWorldHint=false`: it replays only the local recorded snapshot with zero network calls.
+
+## Recorded Nexus Evidence Replay (credential-free, historical)
+
+Status: CAPTURED AND VERIFIED — the production `evidence/nexus-candidate-v1/` snapshot was captured through the four read-only Nexus surfaces at `2026-09-19T18:45:48+00:00`. Aggregate snapshot SHA-256: `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`. The key was environment-only and removed after capture; the committed evidence contains only sanitized canonical JSON. Local REST and MCP replay are identical and produce `INCONSISTENT`, `BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY`, and `TRADE_SYMBOLS MISMATCH` with `source_report_verified:true`.
+
+Recorded versus live: the replay is a recorded historical Nexus snapshot for `SKLab AlphaLitmus Candidate v1` (`str_b840280ce037`, run `bt-7544746ff32d`, `BTC/USDT`), not a live Nexus call, not independent attestation, not proof of profitability, and not trading authorization.
+
+Capture (operator with authorized strategy-bound key only):
+
+```powershell
+python -m tools.capture_nexus_snapshot
+```
+
+The tool is locked to the repository-owned `evidence/nexus-candidate-v1/` destination and the four fixed Candidate v1 identity constants; alternate identities, arbitrary output paths, links, and unexpected overwrite trees are rejected before any Nexus call. It reuses `app.nexus.read_nexus` (four read-only tools only), requires all four surfaces `received`, verifies equity/trades run binding, persists only sanitized canonical JSON plus `manifest.json`, and fails closed with staged writes plus the repository's complete secret scanner. The aggregate SHA-256 binds all manifest metadata and per-file hashes. It never prints the key. These hashes establish source-commit-bound content consistency, not Nexus authorship or authenticity; the strategy ID remains an operator assertion from the strategy-bound key because the read surfaces do not return it.
+
+Replay (reviewer, no key):
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8040/v1/nexus/replay/candidate-v1 -Method Get
+```
+
+MCP: `{"name":"replay_recorded_nexus_evidence","arguments":{}}`. Both share `app.transport.run_recorded_replay` and return identical strict `RecordedNexusReplay` content. REST accepts neither a request body nor query parameters. Without the production snapshot the endpoint returns `503 RECORDED_EVIDENCE_UNAVAILABLE`; tampering returns `500 RECORDED_EVIDENCE_INVALID` or `RECORDED_EVIDENCE_INTEGRITY_FAILED`. Expected genuine behavior (once captured): `INCONSISTENT`, `BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY`, `TRADE_SYMBOLS MISMATCH`, `source_report_verified:true`, `no_execution:true`, `profitability_claimed:false`. Documented reconciliation hash: `5b59fa3e55d1417d932b201da63cd505b55e53a9662e8c0daea3e17335838e25`. See [Nexus live evidence](docs/NEXUS-LIVE-EVIDENCE.md).
 
 ## Nexus Window Compute
 
@@ -157,7 +181,7 @@ See [VPS deployment](docs/VPS-DEPLOYMENT.md).
 
 A public safe-mode API, judge UI, and source repository are available, but no profitable-strategy validation, rights clearance, registration proof, official validator success or contest acceptance is claimed. Real Studio runs and one callable read-only Nexus MCP snapshot exist; AlphaLitmus classified the candidate `INCONSISTENT` because its recent trades crossed instruments. Do not infer ownership or data-use rights from file availability.
 
-Dependency license metadata and the inventory document third-party evidence only. They do not grant a project license, establish project ownership, or clear source, data or branding rights. Current aggregate gate results (post-hardening local run, Python 3.12.10): 614 passed with 1 warning, Ruff clean, strict mypy clean (16 source files), `pip check` clean, secret scan exit 0, local smoke exit 0 (6 MCP tools; artifacts under the run's temporary directory), isolated pip-audit reporting no known vulnerabilities for `requirements.txt`, and a healthy hardened target-VPS container behind verified public HTTPS. Successful release-gate decisions require a verified source certificate. The redesigned live UI received a current Chromium browser pass at desktop and 390×844 mobile viewports: mixed auto-load and shock transition completed, export controls enabled, no document-level horizontal overflow appeared, and no application console warning/error was observed. This is not formal accessibility or cross-browser certification. The active health and proof endpoints report the same public 40-character source commit.
+Dependency license metadata and the inventory document third-party evidence only. They do not grant a project license, establish project ownership, or clear source, data or branding rights. Current aggregate gate results (post-recorded-replay hardening local run, Python 3.12.10): 664 passed with 1 warning, Ruff clean, strict mypy clean (17 source files), `pip check` clean, secret scan exit 0, local smoke exit 0 (7 MCP tools; artifacts under the run's temporary directory), isolated pip-audit reporting no known vulnerabilities for `requirements.txt`, and a healthy hardened target-VPS container behind verified public HTTPS. The current Windows Docker daemon was unavailable, so the revised evidence-packaging layer has not yet received a new local image build. Successful release-gate decisions require a verified source certificate. The redesigned live UI received a current Chromium browser pass at desktop and 390×844 mobile viewports: mixed auto-load and shock transition completed, export controls enabled, no document-level horizontal overflow appeared, and no application console warning/error was observed. This is not formal accessibility or cross-browser certification. The active health and proof endpoints report the same public 40-character source commit.
 
 - [Demo](docs/DEMO.md): repeatable local presentation with negative and unavailable results.
 - [Methodology](docs/METHODOLOGY.md): exact formulas, thresholds, bootstrap assumptions and citations.

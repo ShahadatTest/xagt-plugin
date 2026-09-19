@@ -166,3 +166,18 @@ Candidate v1 is therefore not a verified profitable BTC-only strategy. The live
 MCP run demonstrates AlphaLitmus's intended value: it preserved partial numeric
 agreements, refused to overstate incomplete comparisons, and failed closed on a
 real cross-instrument contradiction.
+
+## Recorded Replay Versus Live Evidence (credential-free historical replay)
+
+The live MCP reconciliation above required an authorized strategy-bound key and
+is not replayable by a reviewer without that secret. The recorded replay is the
+separate credential-free path for that same Candidate v1 evidence:
+
+- Strategy: `SKLab AlphaLitmus Candidate v1`, ID `str_b840280ce037`, symbol `BTC/USDT`, run `bt-7544746ff32d`.
+- Documented reconciliation hash: `5b59fa3e55d1417d932b201da63cd505b55e53a9662e8c0daea3e17335838e25`.
+- Expected genuine replay: `INCONSISTENT`, `BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY`, `TRADE_SYMBOLS MISMATCH`, four surfaces, `source_report_verified:true`, `no_execution:true`, `profitability_claimed:false`.
+- Capture: `python -m tools.capture_nexus_snapshot` (fixed Candidate v1 identity and repository destination, four read-only tools only, staged atomic publication, complete repository secret scan, never logs the key).
+- Replay: `GET /v1/nexus/replay/candidate-v1` and MCP `replay_recorded_nexus_evidence` (`{}`), both via `app.transport.run_recorded_replay` with zero network calls and byte-identical results.
+- Recorded means historical snapshot, not a live Nexus call, not independent authenticity attestation, not profit proof, not trading authorization. Signal/metrics carry no run ID; trades are recent fills. The aggregate binds the manifest metadata and file hashes for source-commit-bound consistency, but does not authenticate Nexus or independently prove the operator-asserted strategy identity.
+
+Status in this workspace: CAPTURED AND VERIFIED. The sanitized canonical production snapshot is checked in at `evidence/nexus-candidate-v1/`, captured at `2026-09-19T18:45:48+00:00`, with aggregate SHA-256 `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`. Strict loading, complete secret scanning, REST/MCP parity, source certificate verification, and the expected `INCONSISTENT` / `BLOCK_DEPLOYMENT` / `DO_NOT_DEPLOY` / `TRADE_SYMBOLS MISMATCH` path passed. This remains recorded historical evidence with the limitations above; it is not a live call, independent source authentication, or profit proof.

@@ -299,12 +299,21 @@ def _decision(req: ChallengeRequest, analysis: ReferenceAnalysis | None,
             not insufficient, insufficient + failures, failures)
 
 
-def challenge(req: ChallengeRequest, evidence: dict[str, Any] | None = None) -> Report:
+def _challenge_impl(req: ChallengeRequest, evidence: dict[str, Any] | None, created_at_iso: str) -> Report:
+    """Internal deterministic core; public callers must use challenge().
+
+    The recorded-evidence replay passes the snapshot capture time so repeated
+    replays are byte-identical. REST/MCP never supply this value, so public
+    callers cannot choose arbitrary provenance timestamps.
+    """
     from app.certificates import content_hash
 
     # Revalidate even model_construct/model_copy instances at the trust boundary.
     req = ChallengeRequest.model_validate(req.model_dump(mode="python"))
-    now = datetime.now(timezone.utc).replace(microsecond=0)
+    # Strict second-precision UTC calendar timestamp; Report validates the shape.
+    created = datetime.fromisoformat(created_at_iso)
+    if created.tzinfo != timezone.utc or created.isoformat(timespec="seconds") != created_at_iso:
+        raise ValueError("captured time must be exact UTC second precision")
     analysis = None
     reconciliation = None
     if req.mode == "reference":
@@ -323,7 +332,7 @@ def challenge(req: ChallengeRequest, evidence: dict[str, Any] | None = None) -> 
     verdict, eligible, reasons, failures = _decision(req, analysis, reconciliation)
     boundaries, matrix = _presentation(analysis, reconciliation, failures)
     classification, dataset_hash = _evidence_identity(req, reconciliation)
-    report = Report(created_at=now.isoformat(), report_id="0" * 64, canonical_report_hash="0" * 64, request=req,
+    report = Report(created_at=created_at_iso, report_id="0" * 64, canonical_report_hash="0" * 64, request=req,
                     mode=req.mode, symbol=req.symbol, verdict=verdict, eligible=eligible,
                     reason_codes=reasons, observed_failures=failures, analysis=analysis,
                     reconciliation=reconciliation, provenance=provenance,
@@ -335,6 +344,11 @@ def challenge(req: ChallengeRequest, evidence: dict[str, Any] | None = None) -> 
     report.report_id = content_hash(report)
     report.canonical_report_hash = report.report_id
     return report
+
+
+def challenge(req: ChallengeRequest, evidence: dict[str, Any] | None = None) -> Report:
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    return _challenge_impl(req, evidence, now.isoformat())
 
 
 def _reconcile(req: ChallengeRequest, evidence: dict[str, Any]) -> ReconciliationSummary:

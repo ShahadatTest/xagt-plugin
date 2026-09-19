@@ -2,6 +2,8 @@
 
 Recorded with Python 3.12.10. The 2026-09-19 baseline round recorded 333 passed and the pre-live hardening round recorded 560. No live Nexus calls were made by AlphaLitmus during those local-only rounds. After explicit authorization, a separate in-memory-key MCP reconciliation exposed and then verified a production object-content envelope; its evidence is recorded in [Nexus live evidence](NEXUS-LIVE-EVIDENCE.md). A later safe-mode HTTPS deployment is recorded in [VPS deployment](VPS-DEPLOYMENT.md); repository publication and submission remain separate.
 
+Recorded-replay status in this workspace: CAPTURED AND VERIFIED. The environment-only key captured four sanitized read-only surfaces into `evidence/nexus-candidate-v1/` at `2026-09-19T18:45:48+00:00`, aggregate `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`, and was then removed. Strict loader, canonical/hash checks, the complete secret scanner, REST 200, query rejection 400, REST/MCP byte parity, and expected `INCONSISTENT` / `BLOCK_DEPLOYMENT` / `DO_NOT_DEPLOY` / `TRADE_SYMBOLS MISMATCH` all passed with `source_report_verified:true`.
+
 ## Baseline
 
 Before edits, `python -m pytest -q` returned `14 passed, 1 warning in 3.23s`. API/MCP imports passed. No project lint/type gates were configured.
@@ -10,13 +12,13 @@ Before edits, `python -m pytest -q` returned `14 passed, 1 warning in 3.23s`. AP
 
 ```text
 python -m pytest -q
-614 passed, 1 warning in 76.82s
+664 passed, 1 warning in 69.78s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 16 source files
+Success: no issues found in 17 source files
 
 python -m pip check
 No broken requirements found.
@@ -43,13 +45,14 @@ Both transports produced the same synthetic-reference `UNPROVEN` report hash:
 a9afa0e169636b68550c62f05ff71429da10fec7e379ed6f6efe81e4c305e381
 ```
 
-Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (6 tools, primary first):
+Observed REST service/proof slug: `alpha-litmus`. Commit claims matched. TCP health: HTTP 200. MCP discovery (7 tools, primary first):
 
 ```text
 challenge_nexus_strategy
 evaluate_strategy_release
 find_failure_boundary
 get_demo_fixture
+replay_recorded_nexus_evidence
 run_nexus_window_stability
 verify_failure_certificate
 ```

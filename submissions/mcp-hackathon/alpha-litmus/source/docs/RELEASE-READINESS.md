@@ -31,13 +31,13 @@ Final local gates, Python 3.12.10, after the release-gate hardening:
 
 ```text
 python -m pytest -q
-614 passed, 1 warning in 76.82s
+664 passed, 1 warning in 69.78s
 
 python -m ruff check .
 All checks passed!
 
 python -m mypy app
-Success: no issues found in 16 source files
+Success: no issues found in 17 source files
 
 python -m pip check
 No broken requirements found.
@@ -46,10 +46,12 @@ python tools/secret_scan.py
 (exit 0, no findings)
 
 python -m tools.local_smoke
-(exit 0; 6 MCP tools including primary evaluate_strategy_release; REST/MCP hash-equivalent UNPROVEN synthetic report)
+(exit 0; 7 MCP tools including primary evaluate_strategy_release and recorded replay; REST/MCP hash-equivalent UNPROVEN synthetic report)
 ```
 
 The release-gate upgrade adds `POST /v1/release-gate`, `GET /v1/release-gate/demo/{mixed,shock}`, MCP `evaluate_strategy_release` (primary, `readOnlyHint=true`), and the `app/release_gate.py` projection. Successful gate results are only issued from a source certificate accepted by the existing `verify_report` (`source_report_verified:true`); invalid sources fail closed with sanitized `REPORT_VERIFICATION_FAILED`. Verification replays the bounded reference/reconciliation calculations, so a gate call costs roughly one challenge plus one verification replay. Existing five tools and report verification remain authoritative and backward compatible. Synthetic demos remain `INSUFFICIENT_EVIDENCE`; `SURVIVED_BOUNDED_TESTS` is not deployment approval. See [agent call contract](AGENT-CALL-CONTRACT.md).
+
+The recorded-replay upgrade adds `tools/capture_nexus_snapshot.py`, `app/recorded_nexus.py` (strict canonical loader plus real-engine replay), strict body/query-free `GET /v1/nexus/replay/candidate-v1`, MCP `replay_recorded_nexus_evidence` (seventh tool, strict empty args, `openWorldHint=false`), dashboard replay section, and production-image evidence packaging. Capture is locked to the fixed Candidate v1 identity and repository destination; the staged snapshot passes the complete repository secret scanner before atomic publication. Status: CAPTURED AND VERIFIED — capture `2026-09-19T18:45:48+00:00`, aggregate `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`. Genuine local REST/MCP replay is identical and yields `INCONSISTENT`/`BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY` with `TRADE_SYMBOLS MISMATCH` and `source_report_verified:true`. Hash verification is source-commit-bound content consistency, not independent source authenticity.
 
 There were zero failures and zero skips in the final run. The warning is Starlette's use of AnyIO's deprecated BlockingPortal alias; it is not suppressed. Quantitative unchanged-fixture results recorded 2026-09-19 are historical and kept in [DEMO](DEMO.md). Full smoke evidence and its reproduction command are in [LOCAL-VERIFICATION](LOCAL-VERIFICATION.md). Smoke verifier artifacts are written only under the run's temporary directory, so a fresh clone with no ignored `reports/` directory passes.
 
@@ -57,7 +59,7 @@ There were zero failures and zero skips in the final run. The warning is Starlet
 
 Local health service and proof slug both returned `alpha-litmus`. The source reads only `ALPHALITMUS_COMMIT`, without a legacy fallback. Development reported `local-dev`, not an actual public review commit. Body handling is capped at 4,000,000 bytes, eight intake slots, a 10-second body deadline and two compute slots per process; `GET /health` bypasses upload intake and compute admission and never waits for body input.
 
-A real local MCP stdio subprocess client discovered all six tools (including primary `evaluate_strategy_release`) and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
+A real local MCP stdio subprocess client discovered all seven tools (including primary `evaluate_strategy_release` and `replay_recorded_nexus_evidence`) and obtained the full mixed demo report. Its hash matched REST exactly. A separate Uvicorn subprocess served health over loopback TCP with HTTP 200. The offline verifier exited 0 for the valid exported report and 1 for its tampered counterpart. Provenance rejects `commit_reviewable=true` with `commit="abc123"` at generation, REST, MCP, and offline-verifier layers. These are local process/transport checks, not an external MCP host or public deployment.
 
 A current Chromium pass on 2026-09-19 exercised the redesigned gate-first dashboard over public HTTPS. The mixed demo auto-loaded, the shock transition reached `INSUFFICIENT_EVIDENCE` with `COLLECT_MORE_EVIDENCE`, Copy/Download controls enabled only after a verified result, desktop and 390×844 mobile layouts had no document-level horizontal overflow, and no application console warning/error was observed. Static/TestClient and Node syntax checks remain in place. This is not formal accessibility conformance or broad cross-browser coverage.
 
@@ -70,7 +72,7 @@ limits and no host port. Nexus remained disabled and no key was deployed. See
 reviewed-commit binding are verified there.
 
 - [x] Final source imports, tests, lint and strict types pass with recorded exact commands/environment.
-- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and six tool names (primary `evaluate_strategy_release` plus the existing five).
+- [x] REST OpenAPI and MCP `tools/list` match README request nesting, field domains and seven tool names (primary `evaluate_strategy_release`, recorded replay, plus the existing five).
 - [x] Synthetic examples cannot receive an eligible survival verdict; missing Nexus evidence remains unproven.
 - [x] A certificate verifies offline; both an ordinary tamper and a rehashed inconsistent analysis fail verification.
 - [x] Provenance contract enforced: reviewable requires nonzero lowercase 40-hex, unreviewable permits only `local-dev`; the rehashed `abc123` claim is rejected by generation, REST, MCP, and the offline verifier.

@@ -16,7 +16,7 @@ An autonomous trading agent (or its release orchestrator) that is about to:
 - continue running after a market-regime change,
 - perform scheduled strategy revalidation.
 
-The primary MCP tool is `evaluate_strategy_release`. The existing five tools remain available for detail, verification, and bounded compute.
+The primary MCP tool is `evaluate_strategy_release`. The existing five tools remain available for detail, verification, and bounded compute. A seventh read-only tool `replay_recorded_nexus_evidence` replays only the recorded Candidate v1 snapshot with no arguments.
 
 ## When it is called
 
@@ -77,6 +77,18 @@ Demo routes:
 GET /v1/release-gate/demo/mixed
 GET /v1/release-gate/demo/shock
 ```
+
+Recorded historical replay (credential-free, no arguments, fixed snapshot only):
+
+```text
+GET /v1/nexus/replay/candidate-v1
+```
+
+```json
+{"name":"replay_recorded_nexus_evidence","arguments":{}}
+```
+
+The replay returns strict `RecordedNexusReplay` (`alphalitmus-recorded-replay-1`) with evidence identity (`SKLab AlphaLitmus Candidate v1`, `str_b840280ce037`, run `bt-7544746ff32d`, `BTC/USDT`, capture time), per-file and aggregate SHA-256, `snapshot_integrity:verified`, `integrity_scope:source_commit_bound_content_consistency_not_authenticity`, the embedded authoritative `ReleaseGateResult`, limitations, `historical:true`, `live:false`, `no_execution:true`, `profitability_claimed:false`, and the disclosure that it is recorded historical evidence, not a live call or profit proof. REST accepts no body or query parameters. REST and MCP share `app.transport.run_recorded_replay`; outputs are identical after transport wrapping. The fixed strategy ID is operator-asserted from the strategy-bound key because Nexus read surfaces do not return it. Missing evidence returns `503 RECORDED_EVIDENCE_UNAVAILABLE`; tampering returns `500 RECORDED_EVIDENCE_INVALID`/`RECORDED_EVIDENCE_INTEGRITY_FAILED`, with no synthetic fallback. The checked-in snapshot was captured at `2026-09-19T18:45:48+00:00`, aggregate `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`, and locally verified through identical REST/MCP replay.
 
 Unknown scenarios return 404 `UNKNOWN_SCENARIO`. There is no persisted report-list API; retain `report_id`, canonical hash, and exported JSON via Copy JSON / Download JSON.
 

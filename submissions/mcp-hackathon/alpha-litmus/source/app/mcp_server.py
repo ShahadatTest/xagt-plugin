@@ -28,9 +28,15 @@ from app.transport import (
     compute,
     decode_json,
     run_challenge,
+    run_recorded_replay,
     run_release_gate,
     run_window_compute,
 )
+
+
+class ReplayRecordedArguments(StrictModel):
+    pass
+
 
 ARGUMENTS: dict[str, type[StrictModel]] = {
     "evaluate_strategy_release": ChallengeArguments,
@@ -39,6 +45,7 @@ ARGUMENTS: dict[str, type[StrictModel]] = {
     "verify_failure_certificate": VerifyArguments,
     "get_demo_fixture": DemoArguments,
     "run_nexus_window_stability": WindowExperimentArguments,
+    "replay_recorded_nexus_evidence": ReplayRecordedArguments,
 }
 
 
@@ -157,6 +164,17 @@ async def run_nexus_window_stability(request: WindowExperimentRequest) -> Window
     NEXUS_API_KEY. Separate from read-only Nexus evidence access.
     """
     return await run_window_compute(request)
+
+
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False))
+async def replay_recorded_nexus_evidence() -> dict[str, Any]:
+    """Replay recorded historical Nexus evidence; never live, never trading.
+
+    Recorded historical Nexus snapshot for SKLab AlphaLitmus Candidate v1 —
+    not a live market call and not evidence of future profitability.
+    """
+    result = await run_recorded_replay()
+    return result.model_dump(mode="json")
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 COPY app ./app
+COPY evidence ./evidence
 RUN useradd --create-home --uid 10001 runner
 USER runner
 EXPOSE 8040

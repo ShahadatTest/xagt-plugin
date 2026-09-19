@@ -69,4 +69,8 @@ python -c "from fastapi.testclient import TestClient; from app.main import app; 
 
 Only an authorized owner may supply actual historical data and an external Nexus key. Preserve caller provenance labels, record acquisition and data rights separately, and distinguish imported reference data from the bound Nexus strategy. Nexus access requires the explicit enable switch and authenticated reverse proxy. No live step is asserted to have occurred here.
 
+## Recorded Replay (separate from synthetic demo)
+
+The dashboard adds “Replay real Nexus evidence →” (`GET /v1/nexus/replay/candidate-v1`, MCP `replay_recorded_nexus_evidence` with `{}`). It replays the sanitized recorded Candidate v1 snapshot through the real reconciliation/release-gate engine with no key and zero network calls. The captured production snapshot (aggregate `3a086a1cbf392d15ae961227c091afa343fde5f21b3aebc2aa81ff9d33b389f8`) produces `INCONSISTENT`, `BLOCK_DEPLOYMENT`/`DO_NOT_DEPLOY`, `TRADE_SYMBOLS MISMATCH`, with capture time, strategy/run IDs, four surfaces, integrity `verified`, limitations, report ID, Copy/Download, and the disclosure that it is recorded historical evidence, not live, independently authenticated, or profit proof.
+
 Pitch: an agent can tell a convincing strategy story; AlphaLitmus exposes bounded failure conditions and evidence gaps in a replayable report. It never promises an edge, investment safety, external acceptance or first place.

@@ -3,7 +3,7 @@
   "name": "AlphaLitmus",
   "slug": "alpha-litmus",
   "sourceRepository": "https://github.com/ShahadatTest/alpha-litmus",
-  "reviewCommit": "dc12a131aa454a8573a186cc234662bb8e03a437",
+  "reviewCommit": "dd4f2e85f1c77435793012d6f52738952566e341",
   "apiBaseUrl": "https://alphalitmus.sklab.cc",
   "healthCheckUrl": "https://alphalitmus.sklab.cc/health",
   "deploymentProofUrl": "https://alphalitmus.sklab.cc/.well-known/xagent-verification.json"

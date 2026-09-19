@@ -58,9 +58,10 @@ async def check_mcp(report: Report, env: dict[str, str], temporary: Path) -> dic
                     await session.initialize()
                     tools = await session.list_tools()
                     names = sorted(tool.name for tool in tools.tools)
-                    assert len(names) == 6
+                    assert len(names) == 7
                     assert set(names) == set(mcp_server.ARGUMENTS)
                     assert "evaluate_strategy_release" in names
+                    assert "replay_recorded_nexus_evidence" in names
                     for tool in tools.tools:
                         assert tool.annotations is not None
                         assert tool.annotations.readOnlyHint == (tool.name != "run_nexus_window_stability")
@@ -68,6 +69,10 @@ async def check_mcp(report: Report, env: dict[str, str], temporary: Path) -> dic
                         if tool.name == "run_nexus_window_stability":
                             assert tool.annotations.idempotentHint is False
                             assert tool.annotations.openWorldHint is True
+                        if tool.name == "replay_recorded_nexus_evidence":
+                            assert tool.annotations.readOnlyHint is True
+                            assert tool.annotations.idempotentHint is True
+                            assert tool.annotations.openWorldHint is False
                     result = await session.call_tool("get_demo_fixture", {"scenario": "mixed"})
                     assert not result.isError and result.structuredContent is not None
                     actual = Report.model_validate(result.structuredContent)

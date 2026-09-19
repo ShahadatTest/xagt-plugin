@@ -39,6 +39,7 @@
         <div class="toolbar">
           <button class="btn btn--primary" id="mixed" type="button">Run safe release-gate demo</button>
           <button class="btn" id="shock" type="button">[ Run shock test ]</button>
+          <button class="btn" id="replay-recorded" type="button">Replay real Nexus evidence →</button>
           <button class="btn" id="copy" type="button" disabled>[ Copy JSON ]</button>
           <button class="btn" id="download" type="button" disabled>[ Export report JSON ]</button>
           <a href="/docs">REST API docs</a>
@@ -93,6 +94,39 @@
           <button class="btn" id="download-inline" type="button" disabled>Download JSON</button>
         </div>
         <details><summary>Inspect complete release-gate JSON</summary><pre id="raw-gate" tabindex="0">Unavailable / no current result.</pre></details>
+      </div>
+    </section>
+    <section class="panel overview" id="recorded" aria-labelledby="recorded-title" tabindex="-1">
+      <div class="overview__head">
+        <div><div class="overview__label" id="recorded-title">2 / Recorded Nexus evidence (historical replay)</div><div class="overview__verdict" id="recorded-decision">RECORDED NEXUS EVIDENCE / AWAITING REPLAY</div><p class="overview__reason" id="recorded-action">Replay recorded historical evidence through the production reconciliation engine. No live call, no key required.</p></div>
+        <div class="verdict-chip" id="recorded-source">Source unavailable</div>
+      </div>
+      <div class="overview__metrics" id="recorded-metrics"></div>
+      <div class="gate__body">
+        <p id="recorded-disclosure" class="muted">Recorded historical Nexus evidence — not a live market call and not evidence of future profitability.</p>
+        <div id="recorded-status" class="status" role="status" aria-live="polite">Awaiting recorded replay.</div>
+        <div id="recorded-error" class="notice error" role="alert" hidden></div>
+        <h3>Evidence identity</h3>
+        <dl class="gate__ids">
+          <div><dt>Strategy</dt><dd id="recorded-strategy">Unavailable</dd></div>
+          <div><dt>Strategy ID</dt><dd id="recorded-strategy-id">Unavailable</dd></div>
+          <div><dt>Run ID</dt><dd id="recorded-run">Unavailable</dd></div>
+          <div><dt>Capture time</dt><dd id="recorded-captured">Unavailable</dd></div>
+          <div><dt>Surfaces</dt><dd id="recorded-surfaces">Unavailable</dd></div>
+          <div><dt>Integrity</dt><dd id="recorded-integrity">Unavailable</dd></div>
+          <div><dt>Report ID</dt><dd id="recorded-report-id">Unavailable</dd></div>
+        </dl>
+        <h3>Release decision</h3>
+        <ul id="recorded-failures"><li>Awaiting recorded replay; no result shown yet.</li></ul>
+        <h3>TRADE_SYMBOLS</h3>
+        <p id="recorded-symbols">Unavailable</p>
+        <h3>Limitations</h3>
+        <ul id="recorded-limitations"><li>Awaiting recorded replay.</li></ul>
+        <div class="toolbar">
+          <button class="btn" id="copy-recorded" type="button" disabled>Copy JSON</button>
+          <button class="btn" id="download-recorded" type="button" disabled>Download certificate/report</button>
+        </div>
+        <details><summary>Inspect complete recorded replay JSON</summary><pre id="raw-recorded" tabindex="0">Unavailable / no recorded replay yet.</pre></details>
       </div>
     </section>
     <section class="panel" id="when" aria-labelledby="when-title">
@@ -575,6 +609,150 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     $('download-inline').addEventListener('click', downloadGate);
     $('copy').addEventListener('click', copyGate);
     $('copy-inline').addEventListener('click', copyGate);
+    let recorded = null;
+    let recordedSequence = 0;
+    function setRecordedButtons(enabled) {
+      ['copy-recorded', 'download-recorded'].forEach(id => { const node = $(id); if (node) node.disabled = !enabled; });
+    }
+    function clearRecorded(message) {
+      recorded = null;
+      setRecordedButtons(false);
+      $('recorded-decision').textContent = 'RECORDED NEXUS EVIDENCE / UNAVAILABLE';
+      $('recorded-action').textContent = message;
+      $('recorded-source').textContent = 'Source unavailable';
+      $('recorded-strategy').textContent = 'Unavailable';
+      $('recorded-strategy-id').textContent = 'Unavailable';
+      $('recorded-run').textContent = 'Unavailable';
+      $('recorded-captured').textContent = 'Unavailable';
+      $('recorded-surfaces').textContent = 'Unavailable';
+      $('recorded-integrity').textContent = 'Unavailable';
+      $('recorded-report-id').textContent = 'Unavailable';
+      $('recorded-failures').replaceChildren(element('li', message));
+      $('recorded-symbols').textContent = message;
+      $('recorded-limitations').replaceChildren(element('li', message));
+      $('raw-recorded').textContent = message;
+      const metrics = $('recorded-metrics');
+      if (metrics) metrics.replaceChildren();
+    }
+    function renderRecorded(r) {
+      const gate = object(r.release_gate) ? r.release_gate : {};
+      const inner = object(gate.report) ? gate.report : {};
+      const rec = object(inner.reconciliation) ? inner.reconciliation : null;
+      const checks = rec && object(rec.result) ? list(rec.result.results) : [];
+      const tradeSymbols = checks.find(c => c && c.code === 'TRADE_SYMBOLS');
+      $('recorded-decision').textContent = 'RECORDED NEXUS EVIDENCE / ' + String(gate.decision || 'UNAVAILABLE');
+      $('recorded-action').textContent = 'Recommended action: ' + String(gate.recommended_action || 'Unavailable') + ' / Source verdict: ' + String(gate.source_verdict || 'Unavailable');
+      $('recorded-source').textContent = 'Source: ' + String(gate.source_verdict || 'unavailable') + ' / ' + String(gate.evidence_classification || r.snapshot_id || 'unavailable');
+      $('recorded-strategy').textContent = r.strategy_name || unavailable;
+      $('recorded-strategy-id').textContent = r.strategy_id || unavailable;
+      $('recorded-run').textContent = r.run_id || unavailable;
+      $('recorded-captured').textContent = r.captured_at || unavailable;
+      $('recorded-surfaces').textContent = list(r.evidence_surfaces).join(', ') || unavailable;
+      $('recorded-integrity').textContent = r.snapshot_integrity || unavailable;
+      $('recorded-report-id').textContent = gate.report_id || unavailable;
+      $('recorded-disclosure').textContent = r.disclosure || 'Recorded historical Nexus evidence — not a live market call and not evidence of future profitability.';
+      const failures = list(gate.observed_failures);
+      $('recorded-failures').replaceChildren();
+      if (!failures.length) $('recorded-failures').append(element('li', 'No observed failures reported; this is not proof of an edge.'));
+      else failures.forEach(value => $('recorded-failures').append(element('li', value)));
+      $('recorded-symbols').textContent = tradeSymbols ? String(tradeSymbols.code) + ': ' + String(tradeSymbols.status) + ' / ' + String(tradeSymbols.explanation || '') : unavailable;
+      const limits = list(r.limitations);
+      $('recorded-limitations').replaceChildren();
+      if (!limits.length) $('recorded-limitations').append(element('li', 'No limitations supplied.'));
+      else limits.forEach(value => $('recorded-limitations').append(element('li', value)));
+      $('raw-recorded').textContent = JSON.stringify(r, null, 2);
+      const metrics = $('recorded-metrics');
+      if (metrics) {
+        metrics.replaceChildren();
+        [[ 'Decision', gate.decision ], [ 'Action', gate.recommended_action ], [ 'Source', gate.source_verdict ], [ 'Evidence', gate.evidence_classification ]].forEach(([label, value]) => {
+          const metric = element('div', undefined, 'overview__metric');
+          metric.append(element('span', label), element('strong', value));
+          metrics.append(metric);
+        });
+      }
+    }
+    async function loadRecorded() {
+      const current = ++recordedSequence;
+      $('recorded-status').textContent = 'REQUESTING / recorded Nexus evidence replay';
+      $('recorded-error').hidden = true;
+      $('recorded-error').textContent = '';
+      clearRecorded('Unavailable / recorded replay in progress. Previous result cleared.');
+      let timedOut = false;
+      const active = new AbortController();
+      const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
+      try {
+        const response = await fetch('/v1/nexus/replay/candidate-v1', {signal: active.signal, cache: 'no-store'});
+        const raw = await response.text();
+        if (current !== recordedSequence) return;
+        let result;
+        try { result = JSON.parse(raw); }
+        catch { throw new Error('HTTP ' + response.status + ': server returned non-JSON content.'); }
+        if (!response.ok) {
+          const code = object(result) ? String(result.detail || '') : '';
+          if (code.indexOf('RECORDED_EVIDENCE_') === 0) throw new Error(code + ' / recorded snapshot unavailable. No replay is claimed.');
+          throw new Error('HTTP ' + response.status + ': ' + text(result && result.detail !== undefined ? result.detail : result).slice(0, 6000));
+        }
+        if (!object(result) || result.replay_schema_version !== 'alphalitmus-recorded-replay-1' || result.snapshot_id !== 'candidate-v1') {
+          throw new Error('Response is not the recorded replay contract.');
+        }
+        if (result.historical !== true || result.live !== false || result.no_execution !== true || result.profitability_claimed !== false) {
+          throw new Error('CONTRACT VALIDATION FAILED / recorded flags must be historical=true, live=false, no_execution=true, profitability_claimed=false.');
+        }
+        if (result.snapshot_integrity !== 'verified') {
+          throw new Error('CONTRACT VALIDATION FAILED / snapshot integrity must be verified.');
+        }
+        const gate = object(result.release_gate) ? result.release_gate : null;
+        if (!gate || gate.source_report_verified !== true) {
+          throw new Error('CONTRACT VALIDATION FAILED / source_report_verified must be exactly true. No decision is displayed or exported.');
+        }
+        renderRecorded(result);
+        recorded = result;
+        setRecordedButtons(true);
+        $('recorded-status').textContent = 'REPLAY READY / recorded historical evidence / ' + String(gate.decision);
+      } catch (error) {
+        if (current !== recordedSequence) return;
+        clearRecorded('Unavailable / recorded replay failed. No replay is claimed.');
+        $('recorded-status').textContent = 'REPLAY UNAVAILABLE / recorded snapshot unavailable / export disabled';
+        $('recorded-error').textContent = 'RECORDED REPLAY UNAVAILABLE / ' + (timedOut ? 'Timed out after 120 seconds.' : (error && error.message) || String(error));
+        $('recorded-error').hidden = false;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+    function downloadRecorded() {
+      if (!recorded || !object(recorded.release_gate) || recorded.release_gate.source_report_verified !== true) return;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(recorded, null, 2)], {type: 'application/json'}));
+      const link = element('a');
+      link.href = url;
+      link.download = 'alphalitmus-recorded-replay-' + String(recorded.run_id || 'candidate-v1').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) + '.json';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    async function copyRecorded() {
+      if (!recorded || !object(recorded.release_gate) || recorded.release_gate.source_report_verified !== true) return;
+      const payload = JSON.stringify(recorded, null, 2);
+      try {
+        await navigator.clipboard.writeText(payload);
+        $('recorded-status').textContent = 'COPIED / recorded replay JSON copied to clipboard.';
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = payload;
+        document.body.append(area);
+        area.select();
+        try { document.execCommand('copy'); $('recorded-status').textContent = 'COPIED / recorded replay JSON copied to clipboard.'; }
+        catch { $('recorded-status').textContent = 'COPY FAILED / clipboard unavailable; use Download certificate/report.'; }
+        area.remove();
+      }
+    }
+    const replayButton = $('replay-recorded');
+    if (replayButton) replayButton.addEventListener('click', loadRecorded);
+    const copyRecordedButton = $('copy-recorded');
+    if (copyRecordedButton) copyRecordedButton.addEventListener('click', copyRecorded);
+    const downloadRecordedButton = $('download-recorded');
+    if (downloadRecordedButton) downloadRecordedButton.addEventListener('click', downloadRecorded);
+    clearRecorded('Unavailable / awaiting recorded replay. Select Replay real Nexus evidence.');
     clearReport('Unavailable / awaiting current release-gate result.');
     load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed');
   </script>

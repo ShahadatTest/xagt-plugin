@@ -335,11 +335,12 @@ def test_unknown_demo_scenario(client: TestClient) -> None:
 
 def test_capability_lists_six_tools(client: TestClient) -> None:
     data = client.get("/v1/capabilities").json()
-    assert len(data["tools"]) == 6
+    assert len(data["tools"]) == 7
     assert data["tools"][0] == "evaluate_strategy_release"
     assert set(data["tools"]) == set(ARGUMENTS)
     for name in ("evaluate_strategy_release", "challenge_nexus_strategy", "find_failure_boundary",
-                 "verify_failure_certificate", "get_demo_fixture", "run_nexus_window_stability"):
+                 "verify_failure_certificate", "get_demo_fixture", "run_nexus_window_stability",
+                 "replay_recorded_nexus_evidence"):
         assert name in data["tools"]
 
 
@@ -347,11 +348,12 @@ def test_existing_five_tools_remain() -> None:
     async def check() -> None:
         tools = await mcp.list_tools()
         names = {tool.name for tool in tools}
-        assert len(tools) == 6
+        assert len(tools) == 7
         for name in ("challenge_nexus_strategy", "find_failure_boundary", "verify_failure_certificate",
                      "get_demo_fixture", "run_nexus_window_stability"):
             assert name in names
         assert "evaluate_strategy_release" in names
+        assert "replay_recorded_nexus_evidence" in names
         # Existing tools still dispatch.
         result = await mcp.call_tool("challenge_nexus_strategy", {"request": {"mode": "nexus"}})
         assert "nexus_validated" in str(result)
@@ -589,6 +591,7 @@ def test_decision_mappings_and_previous_tools_unchanged() -> None:
         "SURVIVED_BOUNDED_TESTS": "CONTINUE_PAPER_VALIDATION",
     }
     from app.transport import ChallengeArguments, DemoArguments, VerifyArguments, WindowExperimentArguments
+    from app.mcp_server import ReplayRecordedArguments
 
     assert ARGUMENTS == {
         "evaluate_strategy_release": ChallengeArguments,
@@ -597,4 +600,5 @@ def test_decision_mappings_and_previous_tools_unchanged() -> None:
         "verify_failure_certificate": VerifyArguments,
         "get_demo_fixture": DemoArguments,
         "run_nexus_window_stability": WindowExperimentArguments,
+        "replay_recorded_nexus_evidence": ReplayRecordedArguments,
     }

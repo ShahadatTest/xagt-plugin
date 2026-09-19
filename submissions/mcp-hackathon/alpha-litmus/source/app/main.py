@@ -18,6 +18,7 @@ from app.demo import fixture
 from app.lab import challenge
 from app.nexus_compute import WindowExperimentReport, WindowExperimentRequest
 from app.provenance import commit_state, validate_startup
+from app.recorded_nexus import RecordedNexusReplay
 from app.research import ResearchRequest, research
 from app.transport import (
     JSONBoundary,
@@ -28,6 +29,7 @@ from app.transport import (
     nexus_enabled,
     nexus_evidence,
     run_challenge,
+    run_recorded_replay,
     run_release_gate,
     run_window_compute,
 )
@@ -51,7 +53,7 @@ class Capabilities(StrictModel):
     tools: list[str] = Field(default_factory=lambda: [
         "evaluate_strategy_release", "challenge_nexus_strategy", "find_failure_boundary",
         "verify_failure_certificate", "get_demo_fixture",
-        "run_nexus_window_stability",
+        "run_nexus_window_stability", "replay_recorded_nexus_evidence",
     ])
     side_effects: list[Literal["opt_in_nexus_backtest_compute"]] = Field(
         default=["opt_in_nexus_backtest_compute"], max_length=1,
@@ -308,3 +310,19 @@ async def release_gate_demo(scenario: str) -> ReleaseGateResult:
     if scenario not in ("mixed", "shock"):
         raise HTTPException(404, "UNKNOWN_SCENARIO")
     return await run_release_gate(ChallengeRequest(research=fixture(scenario)))
+
+
+@app.get("/v1/nexus/replay/candidate-v1", response_model=RecordedNexusReplay)
+async def replay_candidate(request: Request) -> RecordedNexusReplay:
+    """Replay recorded historical Nexus evidence; never live, never synthetic fallback.
+
+    No request body, query parameters, or caller-selected snapshot are allowed.
+    Missing or invalid snapshots fail closed with a bounded public code.
+    """
+    if request.query_params:
+        raise HTTPException(400, "QUERY_PARAMETERS_NOT_ALLOWED")
+    if await request.body():
+        raise HTTPException(400, "BODY_NOT_ALLOWED")
+
+    result = await run_recorded_replay()
+    return RecordedNexusReplay.model_validate(result.model_dump(mode="python"))
