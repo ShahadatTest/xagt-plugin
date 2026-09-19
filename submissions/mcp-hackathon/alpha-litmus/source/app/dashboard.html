@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23050807'/%3E%3Cpath d='M12 50 27 14h10l15 36H41l-3-9H25l-3 9Zm16-18h7l-3.5-10Z' fill='%233bf58f'/%3E%3C/svg%3E">
+  <title>AlphaLitmus by SKLab | Strategy Challenge</title>
+  <style>
+    /* Operational subset of hacker-ui tokens; local fonts and no motion. */
+    :root{--bg:#050807;--surface:#0A100D;--surface-2:#0D1611;--line:#16241C;--text:#C6E8D5;--muted:#6B8A79;--phos:#3BF58F;--phos-dim:#1E8A55;--warn:#FFB000;--alert:#FF4D4D;--mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color-scheme:dark}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 var(--mono);letter-spacing:.01em}a{color:var(--phos);text-underline-offset:4px}button,input,textarea{font:inherit}button,a,input,textarea,summary,[tabindex]{outline-offset:4px} :focus-visible{outline:2px solid var(--phos)}::selection{background:var(--phos);color:var(--bg)}[hidden]{display:none!important}
+    .skip{position:absolute;left:12px;top:-80px;padding:12px;background:var(--bg);z-index:2}.skip:focus{top:12px}header,main,footer{max-width:1400px;margin:auto;padding:16px 24px}header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.brand{font-size:20px;color:var(--phos);font-weight:700}.byline,.muted{color:var(--muted)}.eyebrow,h2,h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--phos)}h1{font-size:clamp(22px,4vw,32px);line-height:1.3;margin:8px 0 12px}h2{margin:0 0 12px}h3{margin:16px 0 8px}p{margin:0 0 12px}.hero{padding:12px 0}.hero p{max-width:90ch}.tag{color:var(--warn);font-size:12px}.term,.panel{border:1px solid var(--line);background:var(--surface);min-width:0}.term__bar{padding:8px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.08em;color:var(--muted)}.term__body,.panel{padding:16px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.btn{padding:10px 14px;border:1px solid var(--phos);border-radius:0;background:transparent;color:var(--phos);cursor:pointer;font-size:12px;text-transform:uppercase;min-height:44px}.btn:hover:not(:disabled){background:var(--phos);color:var(--bg)}.btn:disabled{color:var(--muted);border-color:var(--line);cursor:not-allowed}.field{display:block;margin:12px 0 6px}.field::before{content:'> ';color:var(--phos)}input,textarea{max-width:100%;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:0;padding:10px}input[type=file]{width:100%}textarea{width:100%;resize:vertical;min-height:150px}details{margin-top:12px}summary{cursor:pointer;color:var(--phos);padding:6px 0;min-height:36px}.notice{border:1px solid var(--warn);padding:12px 16px;color:var(--warn);margin:16px 0}.error{border-color:var(--alert);color:var(--alert);white-space:pre-wrap;overflow-wrap:anywhere}.status{padding:12px 0;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:8px 18px;padding:0 0 16px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:12px 0}.stat{padding:12px;background:var(--bg);min-width:0}.stat__label{color:var(--muted);font-size:12px}.stat__value{font-size:22px;color:var(--phos);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.warn{color:var(--warn)}.scroll-x{overflow-x:auto;max-width:100%}.table{width:100%;border-collapse:collapse;font-size:13px}.table caption{text-align:left;color:var(--muted);padding-bottom:8px}.table th,.table td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.table th{color:var(--muted);font-size:11px;text-transform:uppercase;white-space:nowrap}.table tbody tr:hover{background:var(--surface-2)}pre{margin:8px 0;padding:12px;background:var(--bg);border:1px solid var(--line);font:12px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto}dl{margin:0}dt{color:var(--muted);margin-top:8px;font-size:12px}dd{margin:0;overflow-wrap:anywhere}ul{padding-left:20px}li{margin:6px 0;overflow-wrap:anywhere}footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:20px}.empty{color:var(--muted)}section{scroll-margin-top:16px}
+    /* Judge-facing presentation layer. It keeps the terminal identity while
+       making the primary action, result and failure shape immediately legible. */
+    html,body{max-width:100%;overflow-x:hidden}body{background:radial-gradient(circle at 70% -10%,rgba(59,245,143,.07),transparent 32rem),var(--bg)}header,main,footer{width:100%;min-width:0}.header__brand{display:flex;align-items:center;gap:10px;min-width:0}.mark{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border:1px solid var(--phos);background:rgba(59,245,143,.06);color:var(--phos);font-weight:800;box-shadow:inset 0 0 18px rgba(59,245,143,.08)}.powered{align-self:center;color:var(--muted);font-size:12px;text-align:right}.powered strong{color:var(--text);font-weight:500}.hero{padding:34px 0 24px}.hero h1{max-width:24ch;font-size:clamp(30px,5vw,58px);line-height:1.08;letter-spacing:-.04em}.hero__copy{max-width:76ch;color:#9DB9AA}.tag{display:flex;gap:8px;flex-wrap:wrap}.tag span{padding:3px 7px;border:1px solid #56430a;background:rgba(255,176,0,.04)}.hero__steps{display:flex;gap:8px 24px;flex-wrap:wrap;margin:18px 0 0;padding:0;list-style:none;color:var(--muted);font-size:12px}.hero__steps span{color:var(--phos);margin-right:7px}.term{box-shadow:0 16px 80px rgba(0,0,0,.2)}.toolbar>*{min-width:0;max-width:100%}.btn--primary{background:var(--phos);color:var(--bg);font-weight:800;box-shadow:0 0 28px rgba(59,245,143,.14)}.btn--primary:hover:not(:disabled){background:#8AFFBB}.status{font-size:12px;letter-spacing:.06em}.notice{overflow-wrap:anywhere}.overview{margin:0 0 16px;padding:0;overflow:hidden;border-color:#21472f;background:linear-gradient(145deg,rgba(59,245,143,.055),rgba(10,16,13,.95) 35%)}.overview__head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:22px;border-bottom:1px solid var(--line)}.overview__label{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.overview__verdict{font-size:clamp(32px,5vw,56px);line-height:1;color:var(--phos);font-weight:800;letter-spacing:-.04em;overflow-wrap:anywhere}.overview__reason{max-width:70ch;margin-top:8px;color:var(--text)}.verdict-chip{padding:8px 12px;border:1px solid var(--line);color:var(--muted);font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap}.verdict-chip[data-eligible="true"]{border-color:var(--phos);color:var(--phos)}.overview__metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line)}.overview__metric{padding:14px 22px;border-right:1px solid var(--line);min-width:0}.overview__metric:last-child{border:0}.overview__metric span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.overview__metric strong{display:block;margin-top:4px;color:var(--text);font-size:18px;overflow-wrap:anywhere}.viz-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line)}.viz{margin:0;padding:18px;background:var(--surface);min-width:0}.viz figcaption{margin-bottom:14px;color:var(--phos);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.chart-note{margin-top:10px;color:var(--muted);font-size:10px}.bar-row{display:grid;grid-template-columns:76px minmax(80px,1fr) 62px;gap:8px;align-items:center;margin:8px 0;font-size:10px}.bar-row__label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}.bar-row__track{position:relative;height:10px;background:#050807;border:1px solid var(--line)}.bar-row__track::after{content:'';position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:#345043}.bar-row__fill{position:absolute;top:1px;bottom:1px;width:var(--size);max-width:50%}.bar-row__fill.positive{left:50%;background:var(--phos)}.bar-row__fill.negative{right:50%;background:var(--alert)}.bar-row__value{text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}.line-chart{display:block;width:100%;height:auto;min-height:125px;background:rgba(5,8,7,.6);border:1px solid var(--line)}.heatmap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.heat-cell{min-height:46px;padding:7px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.heat-cell span{font-size:9px;color:#A7C5B5;white-space:nowrap}.heat-cell strong{font-size:11px;font-weight:600}.report-nav{padding:0 0 16px}.report-nav__label{flex-basis:100%;color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.report-nav a{padding:5px 0}.grid{align-items:start}.panel{box-shadow:0 10px 50px rgba(0,0,0,.1)}
+    @media(max-width:900px){.viz-grid{grid-template-columns:1fr 1fr}.viz:last-child{grid-column:1/-1}.overview__metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview__metric:nth-child(2){border-right:0}.overview__metric:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+    @media(max-width:640px){header,main,footer{padding:12px}header{flex-direction:column;align-items:flex-start}.powered{align-self:flex-start;text-align:left}.brand{font-size:18px}.hero{padding:26px 0 20px}.hero h1{font-size:clamp(30px,10vw,42px);overflow-wrap:anywhere}.hero__copy{overflow-wrap:anywhere}.hero__steps{display:grid;gap:7px}.grid{grid-template-columns:minmax(0,1fr)}.wide{grid-column:auto}.term__body,.panel{padding:12px}.toolbar{display:grid;grid-template-columns:minmax(0,1fr);width:100%}.toolbar .btn,.toolbar>a,.toolbar input{width:100%;min-width:0;text-align:center}.overview{padding:0}.overview__head{grid-template-columns:minmax(0,1fr);padding:16px}.overview__verdict{font-size:36px}.verdict-chip{justify-self:start;white-space:normal}.overview__metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.overview__metric{padding:12px}.overview__metric strong{font-size:15px}.viz-grid{grid-template-columns:minmax(0,1fr)}.viz:last-child{grid-column:auto}.viz{padding:14px}.report-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}.report-nav__label{grid-column:1/-1}.report-nav a{overflow-wrap:anywhere}.table th,.table td{padding:8px}.notice{padding:11px 12px}.bar-row{grid-template-columns:66px minmax(70px,1fr) 56px}pre{max-width:100%}}
+    @media(prefers-reduced-motion:no-preference){.btn,.panel{transition:border-color .16s ease,background .16s ease,transform .16s ease}.btn:hover:not(:disabled){transform:translateY(-1px)}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#report">Skip to report</a>
+  <header><div class="header__brand"><div class="mark" aria-hidden="true">A</div><div class="brand">AlphaLitmus <span class="byline">by SKLab</span></div></div><div class="powered">Powered by <strong>OlaXBT Nexus</strong></div></header>
+  <main>
+    <div class="hero">
+      <div class="eyebrow">Strategy challenge / judge workspace</div>
+      <h1>Break the strategy before the market does.</h1>
+      <p class="hero__copy">Falsify a trading strategy before capital is at risk. Recompute its claims, stress its assumptions and export a tamper-evident failure certificate. Reference replay is not validation of a Nexus-bound strategy.</p>
+      <div class="tag" aria-label="Safety constraints"><span>Paper research</span><span>No order execution</span><span>No wallet</span></div>
+      <ol class="hero__steps" aria-label="Challenge workflow"><li><span>01</span>Run a bounded challenge</li><li><span>02</span>Inspect failure evidence</li><li><span>03</span>Export the exact report</li></ol>
+    </div>
+    <section class="term" aria-labelledby="controls-title">
+      <div class="term__bar" id="controls-title">INPUT://CHALLENGE</div>
+      <div class="term__body">
+        <div class="toolbar">
+          <button class="btn btn--primary" id="mixed" type="button">[ Run judge demo ]</button>
+          <button class="btn" id="shock" type="button">[ Run shock test ]</button>
+          <button class="btn" id="download" type="button" disabled>[ Export report JSON ]</button>
+          <a href="/docs">REST API docs</a>
+        </div>
+        <details>
+          <summary>Import ChallengeRequest JSON</summary>
+          <p id="import-help">Supply the complete request, not a Report or bare candle array. Reference mode requires <code>research</code> with daily candles, source and data_kind. The server validates the contract. Never include credentials. Maximum import: 2 MB.</p>
+          <label class="field" for="file">JSON file (submits on selection)</label>
+          <input type="file" id="file" accept="application/json,.json" aria-describedby="import-help">
+          <form id="import-form">
+            <label class="field" for="request-json">Or paste a complete ChallengeRequest</label>
+            <textarea id="request-json" spellcheck="false" aria-describedby="import-help" placeholder='{"mode":"reference","symbol":"BTC/USDT","research":{...}}' required></textarea>
+            <button class="btn" type="submit">[ Submit challenge ]</button>
+          </form>
+        </details>
+        <details>
+          <summary>Nexus evidence challenge (explicit mode: nexus)</summary>
+          <p id="nexus-help">Read-only server-side evidence request. Credential availability is unknown to this page; missing access or evidence is reported, not treated as validation. No API keys belong in this form.</p>
+          <form id="nexus-form" class="toolbar">
+            <label class="field" for="symbol">Requested symbol (not verified identity)</label>
+            <input id="symbol" value="BTC/USDT" pattern="[A-Z0-9]{2,12}/[A-Z0-9]{2,12}" maxlength="25" required aria-describedby="nexus-help">
+            <button class="btn" type="submit">[ Challenge Nexus evidence ]</button>
+          </form>
+        </details>
+      </div>
+    </section>
+    <div id="status" class="status" role="status" aria-live="polite">Awaiting report.</div>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <div id="notice" class="notice">SYNTHETIC DEMO / Generated prices are application test data, never evidence of live performance or a profitable edge.</div>
+    <section class="panel overview" id="overview" aria-labelledby="overview-title">
+      <div class="overview__head">
+        <div><div class="overview__label" id="overview-title">Current falsification result</div><div class="overview__verdict" id="overview-verdict">AWAITING REPORT</div><p class="overview__reason" id="overview-reason">Run the judge demo to generate a bounded, evidence-labeled result.</p></div>
+        <div class="verdict-chip" id="overview-eligible">Eligibility unavailable</div>
+      </div>
+      <div class="overview__metrics" id="overview-metrics"></div>
+      <div class="viz-grid">
+        <figure class="viz"><figcaption>Fold performance / return %</figcaption><div id="fold-chart"></div><p class="chart-note">Zero-centered; guarded variant only.</p></figure>
+        <figure class="viz"><figcaption>Cost fragility / return curve</figcaption><div id="frontier-chart"></div><p class="chart-note">Additional modeled bps, not a forecast.</p></figure>
+        <figure class="viz"><figcaption>Parameter sensitivity / return %</figcaption><div class="heatmap" id="sensitivity-chart"></div><p class="chart-note">Local neighborhood, not optimization advice.</p></figure>
+      </div>
+    </section>
+    <nav class="report-nav" aria-label="Report sections">
+      <div class="report-nav__label">Deep evidence / 11 sections</div>
+      <a href="#strategy">01 Evidence</a><a href="#verdict">02 Verdict</a><a href="#metrics">03 Metrics</a><a href="#claims">04 Claims</a><a href="#stress">05 Stress</a><a href="#frontier">06 Frontier</a><a href="#boundary">07 Boundary</a><a href="#certificate">08 Certificate</a><a href="#provenance">09 Provenance</a><a href="#limitations">10 Limitations</a><a href="#usage">11 Export / usage</a>
+    </nav>
+    <div id="report" class="grid" aria-busy="false" tabindex="-1">
+      <section class="panel" id="strategy"><h2>01 / Strategy &amp; evidence</h2><div data-body></div></section>
+      <section class="panel" id="verdict"><h2>02 / Verdict</h2><div data-body></div></section>
+      <section class="panel wide" id="metrics"><h2>03 / Recomputed metrics</h2><div data-body></div></section>
+      <section class="panel wide" id="claims"><h2>04 / Claims vs recomputed</h2><div data-body></div></section>
+      <section class="panel wide" id="stress"><h2>05 / Stress matrix</h2><div data-body></div></section>
+      <section class="panel" id="frontier"><h2>06 / Fragility frontier</h2><div data-body></div></section>
+      <section class="panel" id="boundary"><h2>07 / Minimal failure boundary</h2><div data-body></div></section>
+      <section class="panel" id="certificate"><h2>08 / Certificate</h2><div data-body></div></section>
+      <section class="panel" id="provenance"><h2>09 / Provenance &amp; hashes</h2><div data-body></div></section>
+      <section class="panel wide" id="limitations"><h2>10 / Limitations &amp; unavailable evidence</h2><div data-body></div></section>
+      <section class="panel wide" id="usage">
+        <h2>11 / Export &amp; usage: REST / MCP</h2>
+        <p>Export is enabled only for the latest successful Report. Starting any new request clears the previous report and disables export. The JSON includes the submitted request and may contain your dataset; review before sharing.</p>
+        <details><summary>Inspect complete current Report JSON</summary><pre id="raw-report" tabindex="0">Unavailable / no current report.</pre></details>
+        <h3>REST / same-origin service</h3>
+        <pre tabindex="0">GET /v1/demo/mixed
+GET /v1/demo/shock
+POST /v1/challenge
+Content-Type: application/json
+
+{"mode":"nexus","symbol":"BTC/USDT"}
+
+# Submit a reference ChallengeRequest saved locally:
+curl -X POST http://127.0.0.1:8000/v1/challenge -H "Content-Type: application/json" --data-binary @challenge.json</pre>
+        <h3>MCP / local stdio</h3>
+        <pre tabindex="0">python -m app.mcp_server</pre>
+        <p>Connect your MCP client to that local command, run <code>tools/list</code>, and use the advertised tool schema. Tool names and availability depend on the running server version. MCP connectivity has not been checked by this page.</p>
+        <p>All page assets are local. Demo and import requests go to this origin; explicit Nexus mode may cause the server to contact Nexus. Opening this HTML as a file is not sufficient: serve it through the application.</p>
+      </section>
+    </div>
+  </main>
+  <footer>AlphaLitmus by SKLab · Powered by OlaXBT Nexus. Historical results do not establish a future edge. A hash is an integrity identifier, not proof of source authenticity. No investment advice or automatic promotion to live trading.</footer>
+  <noscript><p class="notice">JavaScript is required to request and inspect reports. REST API documentation is available at /docs.</p></noscript>
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const unavailable = 'Unavailable / not supplied by this report.';
+    const sections = ['strategy', 'verdict', 'metrics', 'claims', 'stress', 'frontier', 'boundary', 'certificate', 'provenance', 'limitations'];
+    let report = null;
+    let sequence = 0;
+    let controller = null;
+    const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+    const list = value => Array.isArray(value) ? value : [];
+    const text = value => value === null || value === undefined ? unavailable : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
+    const number = (value, suffix = '') => typeof value === 'number' && Number.isFinite(value) ? value.toFixed(2) + suffix : 'Unavailable';
+    function element(tag, value, className) {
+      const node = document.createElement(tag);
+      if (value !== undefined) node.textContent = text(value);
+      if (className) node.className = className;
+      return node;
+    }
+    function body(id) { return $(id).querySelector('[data-body]'); }
+    function fields(parent, entries) {
+      const dl = element('dl');
+      for (const [label, value] of entries) dl.append(element('dt', label), element('dd', value));
+      parent.append(dl);
+    }
+    function json(parent, label, value, expanded = false) {
+      if (value === undefined || value === null) { parent.append(element('p', label + ': ' + unavailable, 'empty')); return; }
+      const details = element('details');
+      details.open = expanded;
+      const pre = element('pre', text(value));
+      pre.tabIndex = 0;
+      details.append(element('summary', label), pre);
+      parent.append(details);
+    }
+    function bullets(parent, values, empty) {
+      if (!values.length) { parent.append(element('p', empty, 'empty')); return; }
+      const ul = element('ul');
+      values.forEach(value => ul.append(element('li', value)));
+      parent.append(ul);
+    }
+    function table(parent, caption, headings, rows) {
+      if (!rows.length) { parent.append(element('p', caption + ': ' + unavailable, 'empty')); return; }
+      const wrap = element('div', undefined, 'scroll-x');
+      wrap.tabIndex = 0;
+      wrap.setAttribute('role', 'region');
+      wrap.setAttribute('aria-label', caption);
+      const t = element('table', undefined, 'table');
+      const head = element('thead'), tr = element('tr'), tbody = element('tbody');
+      headings.forEach(label => { const th = element('th', label); th.scope = 'col'; tr.append(th); });
+      head.append(tr);
+      rows.forEach(row => { const r = element('tr'); row.forEach(value => r.append(element('td', value))); tbody.append(r); });
+      t.append(element('caption', caption), head, tbody); wrap.append(t); parent.append(wrap);
+    }
+    function cards(parent, entries) {
+      const grid = element('div', undefined, 'cards');
+      entries.forEach(([label, value]) => {
+        const card = element('div', undefined, 'stat');
+        card.append(element('div', label, 'stat__label'), element('div', value, 'stat__value'));
+        grid.append(card);
+      });
+      parent.append(grid);
+    }
+    function summaryMetrics(entries) {
+      const root = $('overview-metrics');
+      root.replaceChildren();
+      entries.forEach(([label, value]) => {
+        const metric = element('div', undefined, 'overview__metric');
+        metric.append(element('span', label), element('strong', value));
+        root.append(metric);
+      });
+    }
+    function barChart(parent, entries) {
+      parent.replaceChildren();
+      const finite = entries.filter(item => typeof item.value === 'number' && Number.isFinite(item.value));
+      if (!finite.length) { parent.append(element('p', unavailable, 'empty')); return; }
+      const max = Math.max(1, ...finite.map(item => Math.abs(item.value)));
+      entries.forEach(item => {
+        const row = element('div', undefined, 'bar-row');
+        const track = element('div', undefined, 'bar-row__track');
+        if (typeof item.value === 'number' && Number.isFinite(item.value)) {
+          const fill = element('div', undefined, 'bar-row__fill ' + (item.value >= 0 ? 'positive' : 'negative'));
+          fill.style.setProperty('--size', Math.max(1, Math.abs(item.value) / max * 50) + '%');
+          track.append(fill);
+        }
+        row.append(element('span', item.label, 'bar-row__label'), track, element('span', number(item.value, '%'), 'bar-row__value'));
+        parent.append(row);
+      });
+    }
+    function lineChart(parent, points) {
+      parent.replaceChildren();
+      const clean = points.filter(point => typeof point.x === 'number' && Number.isFinite(point.x) && typeof point.y === 'number' && Number.isFinite(point.y));
+      if (clean.length < 2) { parent.append(element('p', unavailable, 'empty')); return; }
+      const width = 360, height = 150, pad = 18;
+      const xs = clean.map(point => point.x), ys = clean.map(point => point.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(0, ...ys), maxY = Math.max(0, ...ys);
+      const scaleX = value => pad + (value - minX) / Math.max(1e-9, maxX - minX) * (width - pad * 2);
+      const scaleY = value => height - pad - (value - minY) / Math.max(1e-9, maxY - minY) * (height - pad * 2);
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('class', 'line-chart');
+      svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', `Return declines from ${number(clean[0].y, '%')} at ${clean[0].x} bps to ${number(clean.at(-1).y, '%')} at ${clean.at(-1).x} bps.`);
+      const zero = document.createElementNS(svg.namespaceURI, 'line');
+      zero.setAttribute('x1', String(pad)); zero.setAttribute('x2', String(width - pad)); zero.setAttribute('y1', String(scaleY(0))); zero.setAttribute('y2', String(scaleY(0))); zero.setAttribute('stroke', '#345043'); zero.setAttribute('stroke-width', '1');
+      const polyline = document.createElementNS(svg.namespaceURI, 'polyline');
+      polyline.setAttribute('points', clean.map(point => `${scaleX(point.x)},${scaleY(point.y)}`).join(' ')); polyline.setAttribute('fill', 'none'); polyline.setAttribute('stroke', '#3BF58F'); polyline.setAttribute('stroke-width', '2'); polyline.setAttribute('vector-effect', 'non-scaling-stroke');
+      svg.append(zero, polyline); parent.append(svg);
+    }
+    function heatmap(parent, entries) {
+      parent.replaceChildren();
+      const finite = entries.filter(item => typeof item.value === 'number' && Number.isFinite(item.value));
+      if (!finite.length) { parent.append(element('p', unavailable, 'empty')); return; }
+      const max = Math.max(1, ...finite.map(item => Math.abs(item.value)));
+      entries.forEach(item => {
+        const cell = element('div', undefined, 'heat-cell');
+        const value = typeof item.value === 'number' && Number.isFinite(item.value) ? item.value : null;
+        if (value !== null) {
+          const alpha = .12 + Math.abs(value) / max * .42;
+          cell.style.backgroundColor = value >= 0 ? `rgba(59,245,143,${alpha})` : `rgba(255,77,77,${alpha})`;
+        }
+        cell.append(element('span', item.label), element('strong', number(value, '%')));
+        parent.append(cell);
+      });
+    }
+    function clearReport(message) {
+      report = null;
+      $('download').disabled = true;
+      sections.forEach(id => body(id).replaceChildren(element('p', message, 'empty')));
+      $('raw-report').textContent = message;
+      $('overview-verdict').textContent = 'AWAITING REPORT';
+      $('overview-reason').textContent = message;
+      $('overview-eligible').textContent = 'Eligibility unavailable';
+      $('overview-eligible').dataset.eligible = 'false';
+      summaryMetrics([['Test return', '—'], ['Max drawdown', '—'], ['Trades', '—'], ['Evidence', '—']]);
+      [$('fold-chart'), $('frontier-chart'), $('sensitivity-chart')].forEach(node => node.replaceChildren(element('p', 'Awaiting current report.', 'empty')));
+    }
+    function render(r) {
+      const a = object(r.analysis) ? r.analysis : {};
+      const request = object(r.request) ? r.request : {};
+      const research = object(request.research) ? request.research : {};
+      const rec = object(r.reconciliation) ? r.reconciliation : null;
+      const folds = list(a.folds);
+      const test = folds.find(f => f?.name === 'test');
+      sections.forEach(id => body(id).replaceChildren());
+      const synthetic = research.data_kind === 'synthetic' || list(r.reason_codes).includes('SYNTHETIC_DATA_NOT_PROFIT_EVIDENCE');
+      $('notice').textContent = synthetic
+        ? 'SYNTHETIC DATA / Generated prices are application test data. These results are NOT live performance or evidence of a profitable edge.'
+        : r.mode === 'nexus'
+          ? 'NEXUS EVIDENCE / Read-only evidence challenge, not a live performance feed. Reconciliation does not replay or validate the bound strategy. Credential availability is not asserted by this page.'
+          : research.data_kind === 'historical'
+            ? 'HISTORICAL IMPORT / Source is caller-declared, not independently authenticated. Historical replay is not live performance.'
+            : 'DATA KIND UNAVAILABLE / Do not treat this report as historical or live performance evidence.';
+
+      $('overview-verdict').textContent = r.verdict;
+      $('overview-reason').textContent = list(r.observed_failures)[0] || list(r.reason_codes)[0] || 'No explicit failure was returned; this is not proof of an edge.';
+      $('overview-eligible').textContent = r.eligible === true ? 'Eligible under bounded tests' : r.eligible === false ? 'Not eligible' : 'Eligibility unavailable';
+      $('overview-eligible').dataset.eligible = String(r.eligible === true);
+      summaryMetrics([
+        ['Test return', number(test?.guarded?.return_pct, '%')],
+        ['Max drawdown', number(test?.guarded?.max_drawdown_pct, '%')],
+        ['Test trades', test?.guarded?.trade_count ?? 'Unavailable'],
+        ['Evidence', synthetic ? 'Synthetic' : r.mode === 'nexus' ? 'Nexus read-only' : research.data_kind ?? 'Unavailable'],
+      ]);
+      barChart($('fold-chart'), folds.map(fold => ({label: fold?.name ?? 'fold', value: fold?.guarded?.return_pct})));
+      const frontierPreview = list(a.cost_frontier?.trials);
+      lineChart($('frontier-chart'), frontierPreview.map(trial => ({x: trial?.additional_bps, y: trial?.metrics?.return_pct})));
+      heatmap($('sensitivity-chart'), list(a.neighborhood).map(item => ({label: `${item?.fast ?? '?'} / ${item?.slow ?? '?'}`, value: item?.metrics?.return_pct})));
+
+      fields(body('strategy'), [['Mode', r.mode], ['Declared / requested symbol (not authenticated)', r.symbol], ['Data kind', research.data_kind], ['Declared source', research.source], ['Engine', a.engine], ['Input candles', Array.isArray(research.candles) ? research.candles.length : null], ['One-way cost (bps)', a.one_way_cost_bps], ['Training volatility limit', a.train_volatility_limit]]);
+      if (synthetic) body('strategy').append(element('p', 'The symbol is only a request label for generated prices, not the identity of an observed market dataset.', 'warn'));
+      body('strategy').append(element('p', 'Reference engine: EMA baseline versus a training-fitted volatility guard and buy & hold. Nexus evidence is a separate scope.'));
+      json(body('strategy'), 'Request settings (candles omitted here; included in full export)', Object.fromEntries(Object.entries(request).map(([key, value]) => [key, key === 'research' && object(value) ? Object.fromEntries(Object.entries(value).filter(([name]) => name !== 'candles')) : value])));
+
+      cards(body('verdict'), [['Reported verdict', r.verdict], ['Eligible', r.eligible === true ? 'YES' : r.eligible === false ? 'NO' : 'Unavailable']]);
+      body('verdict').append(element('p', 'Server-reported screening verdict, not a trading recommendation. SURVIVED_TESTS is bounded to the supplied tests and does not validate Nexus.', 'warn'));
+      body('verdict').append(element('h3', 'Reason codes'));
+      bullets(body('verdict'), list(r.reason_codes), 'No reason codes supplied.');
+      body('verdict').append(element('h3', 'Observed failures'));
+      bullets(body('verdict'), list(r.observed_failures), 'No observed failures reported; this is not proof of an edge.');
+
+      cards(body('metrics'), [['Test guarded return', number(test?.guarded?.return_pct, '%')], ['Test baseline return', number(test?.baseline?.return_pct, '%')], ['Test guarded drawdown', number(test?.guarded?.max_drawdown_pct, '%')], ['Test guarded trades', test?.guarded?.trade_count ?? 'Unavailable']]);
+      table(body('metrics'), 'Chronological folds / server-recomputed metrics after modeled costs', ['Fold', 'Variant', 'Return %', 'Max drawdown %', 'Trades', 'Expectancy %', 'Profit factor', 'PF status', 'Observations', 'Index range'], folds.flatMap(f => ['baseline', 'guarded', 'buy_hold'].map(key => [f?.name, key, number(f?.[key]?.return_pct), number(f?.[key]?.max_drawdown_pct), f?.[key]?.trade_count, number(f?.[key]?.trade_expectancy_pct), number(f?.[key]?.profit_factor), f?.[key]?.profit_factor_status, f?.[key]?.observations, text(f?.start_index) + ' : ' + text(f?.end_index)])));
+      body('metrics').append(element('p', 'Profit factor uses equal-notional net trade returns. A missing PF is not zero or infinity; inspect PF status (such as no_losses, no_trades or bounded).'));
+
+      if (rec) {
+        fields(body('claims'), [['Reconciliation status', rec.status], ['Evidence supplied', rec.evidence_supplied], ['Mismatches', rec.mismatch_count], ['Insufficient evidence', rec.insufficient_count], ['Strategy replayed', rec.strategy_replayed], ['Freshness basis', rec.freshness_basis], ['As-of (Unix seconds)', rec.as_of]]);
+        body('claims').append(element('p', 'Claim-level results are shown below only when returned. A summary count is not a fabricated claim comparison.'));
+        table(body('claims'), 'Claim-level reconciliation', ['Claim', 'Status', 'Claimed', 'Recomputed', 'Tolerance', 'Evidence path', 'Explanation'], list(rec.result?.results).map(c => [c?.code, c?.status, c?.claimed, c?.recomputed, c?.tolerance, c?.evidence_path, c?.explanation]));
+        json(body('claims'), 'Recomputed summary', rec.result?.summary, true);
+        json(body('claims'), 'Reconciliation results / claimed and recomputed values', rec.result, true);
+        json(body('claims'), 'Complete reconciliation evidence', rec);
+      } else body('claims').append(element('p', 'Reconciliation unavailable. Reference replay alone cannot substantiate Nexus claims.', 'warn'));
+
+      table(body('stress'), 'Execution delay / guarded test metrics', ['Delay bars', 'Return %', 'Max drawdown %', 'Trades'], list(a.delays).map(t => [t?.delay_bars, number(t?.metrics?.return_pct), number(t?.metrics?.max_drawdown_pct), t?.metrics?.trade_count]));
+      table(body('stress'), 'Parameter neighborhood / bounded sensitivity, not an optimization recommendation', ['Fast EMA', 'Slow EMA', 'Return %', 'Max drawdown %', 'Trades'], list(a.neighborhood).map(t => [t?.fast, t?.slow, number(t?.metrics?.return_pct), number(t?.metrics?.max_drawdown_pct), t?.metrics?.trade_count]));
+      table(body('stress'), 'Reported test matrix', ['Test', 'Status', 'Reason'], list(r.test_matrix).map(t => [t?.name, t?.status, t?.reason]));
+      json(body('stress'), 'Resampling / uncertainty, not a forecast', a.resampling, true);
+      json(body('stress'), 'Regime stress results', a.regimes, true);
+
+      const frontier = object(a.cost_frontier) ? a.cost_frontier : {};
+      fields(body('frontier'), [['Status', frontier.status], ['Last profitable additional bps', frontier.last_profitable_bps], ['First nonpositive additional bps', frontier.first_nonpositive_bps], ['Requested additional cost bound (bps)', request.additional_cost_max_bps], ['Requested resolution (bps)', request.cost_resolution_bps], ['Reported resolution (bps)', frontier.resolution_bps]]);
+      body('frontier').append(element('p', 'Additional cost is relative to the modeled baseline. A surviving bound is not an infinite safety margin; a bracket is limited by the tested resolution.'));
+      table(body('frontier'), 'Cost frontier trials', ['Additional bps', 'Return %', 'Max drawdown %', 'Trades', 'Expectancy %', 'Profit factor', 'PF status'], list(frontier.trials).map(t => [t?.additional_bps, number(t?.metrics?.return_pct), number(t?.metrics?.max_drawdown_pct), t?.metrics?.trade_count, number(t?.metrics?.trade_expectancy_pct), number(t?.metrics?.profit_factor), t?.metrics?.profit_factor_status]));
+
+      json(body('frontier'), 'Expectancy break-even', frontier.expectancy_break_even, true);
+      json(body('frontier'), 'Profit factor break-even', frontier.profit_factor_break_even, true);
+      body('boundary').append(element('p', 'Smallest failure found within the server-defined search, not proof of a global minimum. No boundary is inferred from the cost frontier by this page.'));
+      body('boundary').append(element('p', 'Effect is the test return delta in percentage points, not profit factor. A baseline_failure can have zero delta and zero effect; not_discovered does not mean no failure exists.'));
+      table(body('boundary'), 'Per-dimension minimal failure boundaries', ['Dimension', 'Status', 'Baseline', 'Delta', 'Boundary', 'Effect (return pp)', 'Resolution'], list(r.minimal_failure_boundary).map(b => [b?.dimension, b?.status, b?.baseline, b?.delta, b?.boundary, b?.effect, b?.resolution]));
+      json(body('boundary'), 'Boundary domains, effect metric and interpretation', r.minimal_failure_boundary, true);
+
+      fields(body('certificate'), [['Schema', r.schema_version], ['Created at', r.created_at], ['Report ID', r.report_id], ['No execution', r.no_execution], ['Nexus validated', r.nexus_validated], ['Authenticity claimed', r.authenticity_claimed]]);
+      body('certificate').append(element('p', 'This page displays the server receipt; it does not independently verify the certificate or recompute its hash. Integrity is not source authenticity.', 'warn'));
+      fields(body('certificate'), [['Certificate type', r.certificate_type], ['Product version', r.product_version], ['Evidence classification', r.evidence_classification]]);
+
+      fields(body('provenance'), [['Dataset SHA-256', a.dataset_sha256], ['Reconciliation result SHA-256', rec?.result_sha256], ['Report SHA-256 / ID', r.report_id], ['Commit', r.provenance?.commit], ['Commit reviewable', r.provenance?.commit_reviewable], ['Declared source', research.source]]);
+      fields(body('provenance'), [['Canonical report hash', r.canonical_report_hash], ['Report dataset SHA-256', r.dataset_sha256]]);
+      json(body('provenance'), 'Complete provenance', r.provenance);
+
+      bullets(body('limitations'), [...list(r.limitations), ...list(rec?.result?.limitations)], 'No limitations supplied. This omission is not an assurance of completeness.');
+      fields(body('limitations'), [['Selection adjustment', r.selection_adjustment], ['Attempted variants declared', request.attempted_variants]]);
+      const gaps = [...list(r.unavailable_tests), ...list(rec?.result?.unavailable)];
+      if (!object(r.analysis)) gaps.push('Reference analysis unavailable; no replay metrics or stress results can be inferred.');
+      if (!rec) gaps.push('Reconciliation evidence unavailable.');
+      if (a.regimes == null) gaps.push('Regime analysis unavailable in this report.');
+      if (!list(r.minimal_failure_boundary).length) gaps.push('Minimal failure boundary unavailable in this report.');
+      if (!r.provenance?.commit) gaps.push('Reviewable commit identifier unavailable.');
+      bullets(body('limitations'), gaps, 'No additional missing fields detected by this view; see server limitations above.');
+      $('raw-report').textContent = JSON.stringify(r, null, 2);
+    }
+
+    // One sequence covers file reads, fetches and rendering so stale completions cannot win.
+    async function load(url, getBody, label) {
+      const current = ++sequence;
+      controller?.abort();
+      const active = new AbortController();
+      controller = active;
+      clearReport('Unavailable / new request in progress. Previous report cleared.');
+      $('error').hidden = true;
+      $('error').textContent = '';
+      $('status').textContent = 'REQUESTING / ' + label;
+      $('notice').textContent = url.startsWith('/v1/demo/') ? 'SYNTHETIC DEMO / Requesting generated test data, not live performance.' : 'PENDING / Evidence kind will be labeled from the returned Report. No live performance is asserted.';
+      $('report').setAttribute('aria-busy', 'true');
+      let timedOut = false;
+      const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
+      try {
+        const payload = getBody ? await getBody() : undefined;
+        if (current !== sequence) return;
+        const response = await fetch(url, {signal: active.signal, cache: 'no-store', ...(getBody ? {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)} : {})});
+        const raw = await response.text();
+        if (current !== sequence) return;
+        let result;
+        try { result = JSON.parse(raw); }
+        catch { throw new Error('HTTP ' + response.status + ': server returned non-JSON content. Check the application server and route.'); }
+        if (!response.ok) throw new Error('HTTP ' + response.status + ': ' + text(result?.detail ?? result).slice(0, 6000));
+        if (!object(result) || !object(result.request) || typeof result.report_id !== 'string' || typeof result.schema_version !== 'string' || !['UNPROVEN', 'FRAGILE', 'SURVIVED_TESTS', 'INCONSISTENT'].includes(result.verdict) || !['reference', 'nexus'].includes(result.mode)) {
+          throw new Error('Response is not the current AlphaLitmus Report contract. Check that the server exposes the new /v1/challenge and demo Report routes.');
+        }
+        render(result);
+        report = result;
+        $('download').disabled = false;
+        $('status').textContent = 'REPORT READY / ' + label + ' / ' + result.verdict;
+      } catch (error) {
+        if (current !== sequence) return;
+        clearReport('Unavailable / request failed. No current report to export.');
+        $('notice').textContent = 'NO CURRENT EVIDENCE / Request failed. No previous results are retained or presented as current.';
+        $('error').textContent = 'REQUEST FAILED / ' + (timedOut ? 'Timed out after 120 seconds. Retry or inspect the server.' : error.message || String(error));
+        $('error').hidden = false;
+        $('status').textContent = 'REQUEST FAILED / ' + label + ' / export disabled';
+      } finally {
+        clearTimeout(timeout);
+        if (current === sequence) { $('report').setAttribute('aria-busy', 'false'); controller = null; }
+      }
+    }
+    function parseRequest(raw) {
+      if (new Blob([raw]).size > 2000000) throw new Error('Maximum import size is 2 MB.');
+      let value;
+      try { value = JSON.parse(raw); } catch { throw new Error('Invalid JSON. Supply a complete ChallengeRequest object.'); }
+      if (!object(value)) throw new Error('ChallengeRequest must be a JSON object.');
+      return value;
+    }
+    $('mixed').addEventListener('click', () => load('/v1/demo/mixed', null, 'synthetic mixed demo'));
+    $('shock').addEventListener('click', () => load('/v1/demo/shock', null, 'synthetic shock demo'));
+    $('file').addEventListener('change', event => {
+      const file = event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+      load('/v1/challenge', async () => {
+        if (file.size > 2000000) throw new Error('Maximum import size is 2 MB.');
+        return parseRequest(await file.text());
+      }, 'imported ChallengeRequest');
+    });
+    $('import-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const raw = $('request-json').value;
+      load('/v1/challenge', () => parseRequest(raw), 'pasted ChallengeRequest');
+    });
+    $('nexus-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const symbol = $('symbol').value;
+      load('/v1/challenge', () => ({mode: 'nexus', symbol}), 'Nexus evidence / mode: nexus');
+    });
+    $('download').addEventListener('click', () => {
+      if (!report) return;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'}));
+      const link = element('a');
+      link.href = url;
+      link.download = 'alphalitmus-' + report.report_id.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) + '.json';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    clearReport('Unavailable / awaiting current Report.');
+    load('/v1/demo/mixed', null, 'synthetic mixed demo');
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "name": "AlphaLitmus",
+  "slug": "alpha-litmus",
+  "sourceRepository": "https://github.com/ShahadatTest/alpha-litmus",
+  "reviewCommit": "b8e87e207608b3540e73788589c24ddc9539198f",
+  "apiBaseUrl": "https://alphalitmus.sklab.cc",
+  "healthCheckUrl": "https://alphalitmus.sklab.cc/health",
+  "deploymentProofUrl": "https://alphalitmus.sklab.cc/.well-known/xagent-verification.json"
+}
