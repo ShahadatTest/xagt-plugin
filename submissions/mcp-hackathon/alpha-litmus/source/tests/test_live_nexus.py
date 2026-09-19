@@ -302,6 +302,7 @@ def test_secret_absent_from_live_serialization(
 def test_dashboard_exposes_fail_closed_live_pulse() -> None:
     html = TestClient(app).get("/").text
     assert 'id="run-live-nexus"' in html
+    assert "$('hero-live').addEventListener('click', loadLive)" in html
     assert 'id="live-nexus"' in html
     assert 'id="live-details"' in html
     assert "fetch('/v1/nexus/live/candidate-v1'" in html
@@ -310,5 +311,6 @@ def test_dashboard_exposes_fail_closed_live_pulse() -> None:
     assert "if (!liveResult || !object(liveResult.release_gate)" in html
     assert "'READY TO CHECK', 'Not checked yet'" in html
     assert "'CHECKING', 'Pending'" in html
+    assert "revealResult('live-nexus')" in html
     assert "Unavailable / awaiting live Nexus check" not in html
     assert ".innerHTML" not in html

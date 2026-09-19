@@ -10,7 +10,7 @@
     /* Operational subset of hacker-ui tokens; local fonts and no motion. */
     :root{--bg:#050807;--surface:#0A100D;--surface-2:#0D1611;--line:#16241C;--text:#C6E8D5;--muted:#6B8A79;--phos:#3BF58F;--phos-dim:#1E8A55;--warn:#FFB000;--alert:#FF4D4D;--mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color-scheme:dark}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 var(--mono);letter-spacing:.01em}a{color:var(--phos);text-underline-offset:4px}button,input,textarea{font:inherit}button,a,input,textarea,summary,[tabindex]{outline-offset:4px} :focus-visible{outline:2px solid var(--phos)}::selection{background:var(--phos);color:var(--bg)}[hidden]{display:none!important}
-    .skip{position:absolute;left:12px;top:-80px;padding:12px;background:var(--bg);z-index:2}.skip:focus{top:12px}header,main,footer{max-width:1400px;margin:auto;padding:16px 24px}header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.brand{font-size:20px;color:var(--phos);font-weight:700}.byline,.muted{color:var(--muted)}.eyebrow,h2,h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--phos)}h1{font-size:clamp(22px,4vw,32px);line-height:1.3;margin:8px 0 12px}h2{margin:0 0 12px}h3{margin:16px 0 8px}p{margin:0 0 12px}.hero{padding:12px 0}.hero p{max-width:90ch}.tag{color:var(--warn);font-size:12px}.term,.panel{border:1px solid var(--line);background:var(--surface);min-width:0}.term__bar{padding:8px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.08em;color:var(--muted)}.term__body,.panel{padding:16px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.btn{padding:10px 14px;border:1px solid var(--phos);border-radius:0;background:transparent;color:var(--phos);cursor:pointer;font-size:12px;text-transform:uppercase;min-height:44px}.btn:hover:not(:disabled){background:var(--phos);color:var(--bg)}.btn:disabled{color:var(--muted);border-color:var(--line);cursor:not-allowed}.field{display:block;margin:12px 0 6px}.field::before{content:'> ';color:var(--phos)}input,textarea{max-width:100%;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:0;padding:10px}input[type=file]{width:100%}textarea{width:100%;resize:vertical;min-height:150px}details{margin-top:12px}summary{cursor:pointer;color:var(--phos);padding:6px 0;min-height:36px}.notice{border:1px solid var(--warn);padding:12px 16px;color:var(--warn);margin:16px 0}.error{border-color:var(--alert);color:var(--alert);white-space:pre-wrap;overflow-wrap:anywhere}.status{padding:12px 0;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:8px 18px;padding:0 0 16px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:12px 0}.stat{padding:12px;background:var(--bg);min-width:0}.stat__label{color:var(--muted);font-size:12px}.stat__value{font-size:22px;color:var(--phos);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.warn{color:var(--warn)}.scroll-x{overflow-x:auto;max-width:100%}.table{width:100%;border-collapse:collapse;font-size:13px}.table caption{text-align:left;color:var(--muted);padding-bottom:8px}.table th,.table td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.table th{color:var(--muted);font-size:11px;text-transform:uppercase;white-space:nowrap}.table tbody tr:hover{background:var(--surface-2)}pre{margin:8px 0;padding:12px;background:var(--bg);border:1px solid var(--line);font:12px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto}dl{margin:0}dt{color:var(--muted);margin-top:8px;font-size:12px}dd{margin:0;overflow-wrap:anywhere}ul{padding-left:20px}li{margin:6px 0;overflow-wrap:anywhere}footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:20px}.empty{color:var(--muted)}section{scroll-margin-top:16px}
+    .skip{position:absolute;left:12px;top:-80px;padding:12px;background:var(--bg);z-index:2}.skip:focus{top:12px}header,main,footer{max-width:1400px;margin:auto;padding:16px 24px}header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.brand{font-size:20px;color:var(--phos);font-weight:700}.byline,.muted{color:var(--muted)}.eyebrow,h2,h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--phos)}h1{font-size:clamp(22px,4vw,32px);line-height:1.3;margin:8px 0 12px}h2{margin:0 0 12px}h3{margin:16px 0 8px}p{margin:0 0 12px}.hero{padding:12px 0}.hero p{max-width:90ch}.tag{color:var(--warn);font-size:12px}.term,.panel{border:1px solid var(--line);background:var(--surface);min-width:0}.term__bar{padding:8px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.08em;color:var(--muted)}.term__body,.panel{padding:16px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.btn{padding:10px 14px;border:1px solid var(--phos);border-radius:0;background:transparent;color:var(--phos);cursor:pointer;font-size:12px;text-transform:uppercase;min-height:44px}.btn:hover:not(:disabled){background:var(--phos);color:var(--bg)}.btn:disabled{color:var(--muted);border-color:var(--line);cursor:not-allowed}.field{display:block;margin:12px 0 6px}.field::before{content:'> ';color:var(--phos)}input,textarea{max-width:100%;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:0;padding:10px}input[type=file]{width:100%}textarea{width:100%;resize:vertical;min-height:150px}details{margin-top:12px}summary{cursor:pointer;color:var(--phos);padding:6px 0;min-height:36px}.notice{border:1px solid var(--warn);padding:12px 16px;color:var(--warn);margin:16px 0}.error{border-color:var(--alert);color:var(--alert);white-space:pre-wrap;overflow-wrap:anywhere}.status{padding:12px 0;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:8px 18px;padding:0 0 16px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:12px 0}.stat{padding:12px;background:var(--bg);min-width:0}.stat__label{color:var(--muted);font-size:12px}.stat__value{font-size:22px;color:var(--phos);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.warn{color:var(--warn)}.scroll-x{overflow-x:auto;max-width:100%}.table{width:100%;border-collapse:collapse;font-size:13px}.table caption{text-align:left;color:var(--muted);padding-bottom:8px}.table th,.table td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.table th{color:var(--muted);font-size:11px;text-transform:uppercase;white-space:nowrap}.table tbody tr:hover{background:var(--surface-2)}pre{margin:8px 0;padding:12px;background:var(--bg);border:1px solid var(--line);font:12px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto}dl{margin:0}dt{color:var(--muted);margin-top:8px;font-size:12px}dd{margin:0;overflow-wrap:anywhere}ul{padding-left:20px}li{margin:6px 0;overflow-wrap:anywhere}footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:20px}.empty{color:var(--muted)}section{scroll-margin-top:86px}
     /* Judge-facing presentation layer. It keeps the terminal identity while
        making the primary action, result and failure shape immediately legible. */
     html,body{max-width:100%;overflow-x:hidden}body{background:radial-gradient(circle at 70% -10%,rgba(59,245,143,.07),transparent 32rem),var(--bg)}header,main,footer{width:100%;min-width:0}.header__brand{display:flex;align-items:center;gap:10px;min-width:0}.mark{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border:1px solid var(--phos);background:rgba(59,245,143,.06);color:var(--phos);font-weight:800;box-shadow:inset 0 0 18px rgba(59,245,143,.08)}.powered{align-self:center;color:var(--muted);font-size:12px;text-align:right}.powered strong{color:var(--text);font-weight:500}.hero{padding:34px 0 24px}.hero h1{max-width:24ch;font-size:clamp(30px,5vw,58px);line-height:1.08;letter-spacing:-.04em}.hero__copy{max-width:76ch;color:#9DB9AA}.tag{display:flex;gap:8px;flex-wrap:wrap}.tag span{padding:3px 7px;border:1px solid #56430a;background:rgba(255,176,0,.04)}.hero__steps{display:flex;gap:8px 24px;flex-wrap:wrap;margin:18px 0 0;padding:0;list-style:none;color:var(--muted);font-size:12px}.hero__steps span{color:var(--phos);margin-right:7px}.term{box-shadow:0 16px 80px rgba(0,0,0,.2)}.toolbar>*{min-width:0;max-width:100%}.btn--primary{background:var(--phos);color:var(--bg);font-weight:800;box-shadow:0 0 28px rgba(59,245,143,.14)}.btn--primary:hover:not(:disabled){background:#8AFFBB}.status{font-size:12px;letter-spacing:.06em}.notice{overflow-wrap:anywhere}.overview{margin:0 0 16px;padding:0;overflow:hidden;border-color:#21472f;background:linear-gradient(145deg,rgba(59,245,143,.055),rgba(10,16,13,.95) 35%)}.overview__head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:22px;border-bottom:1px solid var(--line)}.overview__label{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.overview__verdict{font-size:clamp(32px,5vw,56px);line-height:1;color:var(--phos);font-weight:800;letter-spacing:-.04em;overflow-wrap:anywhere}.overview__reason{max-width:70ch;margin-top:8px;color:var(--text)}.verdict-chip{padding:8px 12px;border:1px solid var(--line);color:var(--muted);font-size:11px;text-transform:uppercase;text-align:center;white-space:nowrap}.verdict-chip[data-eligible="true"]{border-color:var(--phos);color:var(--phos)}.overview__metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line)}.overview__metric{padding:14px 22px;border-right:1px solid var(--line);min-width:0}.overview__metric:last-child{border:0}.overview__metric span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.overview__metric strong{display:block;margin-top:4px;color:var(--text);font-size:18px;overflow-wrap:anywhere}.viz-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line)}.viz{margin:0;padding:18px;background:var(--surface);min-width:0}.viz figcaption{margin-bottom:14px;color:var(--phos);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.chart-note{margin-top:10px;color:var(--muted);font-size:10px}.bar-row{display:grid;grid-template-columns:76px minmax(80px,1fr) 62px;gap:8px;align-items:center;margin:8px 0;font-size:10px}.bar-row__label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}.bar-row__track{position:relative;height:10px;background:#050807;border:1px solid var(--line)}.bar-row__track::after{content:'';position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:#345043}.bar-row__fill{position:absolute;top:1px;bottom:1px;width:var(--size);max-width:50%}.bar-row__fill.positive{left:50%;background:var(--phos)}.bar-row__fill.negative{right:50%;background:var(--alert)}.bar-row__value{text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}.line-chart{display:block;width:100%;height:auto;min-height:125px;background:rgba(5,8,7,.6);border:1px solid var(--line)}.heatmap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.heat-cell{min-height:46px;padding:7px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.heat-cell span{font-size:9px;color:#A7C5B5;white-space:nowrap}.heat-cell strong{font-size:11px;font-weight:600}.report-nav{padding:0 0 16px}.report-nav__label{flex-basis:100%;color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.report-nav a{padding:5px 0}.grid{align-items:start}.panel{box-shadow:0 10px 50px rgba(0,0,0,.1)}
@@ -38,7 +38,7 @@
     .deep-evidence{margin:20px 0;border:1px solid var(--line);border-radius:18px;background:rgba(13,24,36,.7);overflow:hidden}.deep-evidence>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;padding:20px 24px;list-style:none}.deep-evidence>summary::-webkit-details-marker{display:none}.deep-evidence>summary strong{font-size:16px}.deep-evidence>summary span{color:var(--muted);font-size:13px;font-weight:400}.deep-evidence>summary::after{content:'View';align-self:center;color:var(--phos);font-size:12px}.deep-evidence[open]>summary::after{content:'Hide'}.deep-evidence .report-nav{padding:0 24px 18px}.deep-evidence #report{padding:0 18px 18px}.report-nav a{color:var(--muted);text-decoration:none}.report-nav a:hover{color:var(--phos)}
     .panel h2{font-family:var(--sans);font-weight:750;color:var(--text)}.cards{border-radius:12px;overflow:hidden}pre{border-radius:10px;background:#07111b}.viz{background:rgba(13,24,36,.88)}footer{font-family:var(--sans)}
     @media(max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:28px;padding:52px 0 38px}.hero__proof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.hero__proof-title{grid-column:1/-1}.context-grid{grid-template-columns:minmax(0,1fr)}.header__nav{gap:14px}}
-    @media(max-width:640px){header,main,footer{padding-left:16px;padding-right:16px}.header__nav{width:100%;justify-content:space-between}.powered{display:none}.hero{padding:40px 0 30px}.hero h1{font-size:clamp(40px,12vw,54px)}.hero__copy{font-size:16px}.hero__actions{display:grid}.hero__proof{grid-template-columns:minmax(0,1fr)}.hero__proof-title{grid-column:auto}.term__body{padding:14px}.overview__head{padding:20px}.overview__verdict{font-size:30px}.gate__body{padding:18px}.gate__ids{grid-template-columns:minmax(0,1fr)}.gate__ids div:nth-child(odd){border-right:0}.evidence-details>summary{padding:14px 18px}.evidence-details>summary span{display:none}.deep-evidence>summary{grid-template-columns:minmax(0,1fr) auto;padding:17px}.deep-evidence>summary span{display:none}.deep-evidence #report{padding:0 10px 10px}.deep-evidence .report-nav{padding:0 16px 16px}.toolbar{display:grid}.btn{width:100%}}
+    @media(max-width:640px){header,main,footer{padding-left:16px;padding-right:16px}.header__nav{width:100%;justify-content:space-between}.powered{display:none}.hero{padding:40px 0 30px}.hero h1{font-size:clamp(40px,12vw,54px)}.hero__copy{font-size:16px}.hero__actions{display:grid}.hero__proof{grid-template-columns:minmax(0,1fr)}.hero__proof-title{grid-column:auto}.term__body{padding:14px}.overview__head{padding:20px}.overview__verdict{font-size:30px}.gate__body{padding:18px}.gate__ids{grid-template-columns:minmax(0,1fr)}.gate__ids div:nth-child(odd){border-right:0}.evidence-details>summary{padding:14px 18px}.evidence-details>summary span{display:none}.deep-evidence>summary{grid-template-columns:minmax(0,1fr) auto;padding:17px}.deep-evidence>summary span{display:none}.deep-evidence #report{padding:0 10px 10px}.deep-evidence .report-nav{padding:0 16px 16px}.toolbar{display:grid}.btn{width:100%}section{scroll-margin-top:120px}}
   </style>
 </head>
 <body>
@@ -50,7 +50,7 @@
         <div class="eyebrow">Evidence infrastructure for trading agents</div>
         <h1>Know when a strategy should not ship.</h1>
         <p class="hero__copy">Test a strategy before an agent deploys or scales it. AlphaLitmus challenges costs, delays, regimes, parameters, and source evidence—then returns a verified, reproducible release decision.</p>
-        <div class="hero__actions"><a class="btn btn--primary" href="#live-nexus">Run live Nexus check</a><a class="btn btn--secondary" href="#gate">See release decision</a></div>
+        <div class="hero__actions"><button class="btn btn--primary" id="hero-live" type="button">Run live Nexus check</button><a class="btn btn--secondary" href="#gate">See release decision</a></div>
         <div class="tag" aria-label="Safety constraints"><span>Paper research</span><span>No order execution</span><span>No wallet access</span></div>
       </div>
       <aside class="hero__proof" aria-label="Production capability summary">
@@ -307,6 +307,13 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       if (value !== undefined) node.textContent = text(value);
       if (className) node.className = className;
       return node;
+    }
+    function revealResult(id) {
+      const target = $(id);
+      if (!target) return;
+      target.focus({preventScroll: true});
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'});
     }
     function body(id) { return $(id).querySelector('[data-body]'); }
     function fields(parent, entries) {
@@ -573,7 +580,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
     }
 
     // One sequence covers file reads, fetches and rendering so stale completions cannot win.
-    async function load(url, getBody, label) {
+    async function load(url, getBody, label, reveal = false) {
       const current = ++sequence;
       controller?.abort();
       const active = new AbortController();
@@ -585,6 +592,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       $('notice').textContent = url.includes('/release-gate/demo/') ? 'SYNTHETIC DEMO / Requesting generated test data, not live performance.' : 'PENDING / Evidence kind will be labeled from the returned result. No live performance is asserted.';
       $('report').setAttribute('aria-busy', 'true');
       $('gate').setAttribute('aria-busy', 'true');
+      if (reveal) requestAnimationFrame(() => revealResult('gate'));
       let timedOut = false;
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
       try {
@@ -614,6 +622,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         report = inner;
         setGateButtons(true);
         $('status').textContent = 'DECISION READY / ' + label + ' / ' + result.decision;
+        if (reveal) requestAnimationFrame(() => revealResult('gate'));
       } catch (error) {
         if (current !== sequence) return;
         clearReport('Unavailable / request failed. No current result to export.');
@@ -621,6 +630,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         $('error').textContent = 'REQUEST FAILED / ' + (timedOut ? 'Timed out after 120 seconds. Retry or inspect the server.' : error.message || String(error));
         $('error').hidden = false;
         $('status').textContent = 'REQUEST FAILED / ' + label + ' / export disabled';
+        if (reveal) requestAnimationFrame(() => revealResult('gate'));
       } finally {
         clearTimeout(timeout);
         if (current === sequence) { $('report').setAttribute('aria-busy', 'false'); $('gate').setAttribute('aria-busy', 'false'); controller = null; }
@@ -633,8 +643,8 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       if (!object(value)) throw new Error('ChallengeRequest must be a JSON object.');
       return value;
     }
-    $('mixed').addEventListener('click', () => load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed'));
-    $('shock').addEventListener('click', () => load('/v1/release-gate/demo/shock', null, 'safe release-gate demo / shock'));
+    $('mixed').addEventListener('click', () => load('/v1/release-gate/demo/mixed', null, 'safe release-gate demo / mixed', true));
+    $('shock').addEventListener('click', () => load('/v1/release-gate/demo/shock', null, 'safe release-gate demo / shock', true));
     $('file').addEventListener('change', event => {
       const file = event.target.files[0];
       event.target.value = '';
@@ -642,17 +652,17 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       load('/v1/release-gate', async () => {
         if (file.size > 2000000) throw new Error('Maximum import size is 2 MB.');
         return parseRequest(await file.text());
-      }, 'imported ChallengeRequest');
+      }, 'imported ChallengeRequest', true);
     });
     $('import-form').addEventListener('submit', event => {
       event.preventDefault();
       const raw = $('request-json').value;
-      load('/v1/release-gate', () => parseRequest(raw), 'pasted ChallengeRequest');
+      load('/v1/release-gate', () => parseRequest(raw), 'pasted ChallengeRequest', true);
     });
     $('nexus-form').addEventListener('submit', event => {
       event.preventDefault();
       const symbol = $('symbol').value;
-      load('/v1/release-gate', () => ({mode: 'nexus', symbol}), 'Nexus evidence / mode: nexus');
+      load('/v1/release-gate', () => ({mode: 'nexus', symbol}), 'Nexus evidence / mode: nexus', true);
     });
     function downloadGate() {
       if (!gate || gate.source_report_verified !== true) return;
@@ -737,6 +747,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       $('live-error').hidden = true;
       $('live-error').textContent = '';
       clearLive('Fetching current evidence from four read-only Nexus surfaces.', 'CHECKING', 'Pending');
+      requestAnimationFrame(() => revealResult('live-nexus'));
       let timedOut = false;
       const active = new AbortController();
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 45000);
@@ -766,12 +777,14 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         liveResult = result;
         setLiveButtons(true);
         $('live-status').textContent = 'LIVE RESULT READY / ' + String(result.cache_status).toUpperCase() + ' / ' + String(currentGate.decision);
+        requestAnimationFrame(() => revealResult('live-nexus'));
       } catch (error) {
         if (current !== liveSequence) return;
         clearLive('Unavailable / live Nexus check failed. No recorded fallback was used.');
         $('live-status').textContent = 'LIVE RESULT UNAVAILABLE / export disabled';
         $('live-error').textContent = 'LIVE NEXUS UNAVAILABLE / ' + (timedOut ? 'Timed out after 45 seconds.' : (error && error.message) || String(error));
         $('live-error').hidden = false;
+        requestAnimationFrame(() => revealResult('live-nexus'));
       } finally {
         clearTimeout(timeout);
       }
@@ -791,6 +804,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       catch { $('live-status').textContent = 'COPY FAILED / clipboard unavailable; use Download live result.'; }
     }
     $('run-live-nexus').addEventListener('click', loadLive);
+    $('hero-live').addEventListener('click', loadLive);
     $('copy-live').addEventListener('click', copyLive);
     $('download-live').addEventListener('click', downloadLive);
     let recorded = null;
@@ -859,6 +873,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
       $('recorded-error').hidden = true;
       $('recorded-error').textContent = '';
       clearRecorded('Replaying the verified historical snapshot through the release gate.', 'CHECKING', 'Pending');
+      requestAnimationFrame(() => revealResult('recorded'));
       let timedOut = false;
       const active = new AbortController();
       const timeout = setTimeout(() => { timedOut = true; active.abort(); }, 120000);
@@ -891,6 +906,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         recorded = result;
         setRecordedButtons(true);
         $('recorded-status').textContent = 'REPLAY READY / recorded historical evidence / ' + String(gate.decision);
+        requestAnimationFrame(() => revealResult('recorded'));
       } catch (error) {
         if (current !== recordedSequence) return;
         clearRecorded('Unavailable / recorded replay failed. No replay is claimed.');
@@ -898,6 +914,7 @@ curl -X POST http://127.0.0.1:8000/v1/release-gate -H "Content-Type: application
         $('recorded-status').textContent = 'REPLAY UNAVAILABLE / recorded snapshot unavailable / export disabled';
         $('recorded-error').textContent = 'RECORDED REPLAY UNAVAILABLE / ' + (timedOut ? 'Timed out after 120 seconds.' : (error && error.message) || String(error));
         $('recorded-error').hidden = false;
+        requestAnimationFrame(() => revealResult('recorded'));
       } finally {
         clearTimeout(timeout);
       }

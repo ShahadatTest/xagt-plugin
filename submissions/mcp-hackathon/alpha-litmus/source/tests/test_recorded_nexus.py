@@ -435,6 +435,7 @@ def test_dashboard_states() -> None:
     assert "recorded-decision" in html
     assert 'id="recorded-details"' in html
     assert "'READY TO REPLAY', 'Not replayed yet'" in html
+    assert "revealResult('recorded')" in html
     assert "Unavailable / awaiting recorded replay" not in html
     assert "recorded-strategy-id" in html
     assert "recorded-run" in html

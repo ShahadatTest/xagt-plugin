@@ -20,21 +20,21 @@
 ## Source and reproducibility
 
 - **Source repository:** https://github.com/ShahadatTest/alpha-litmus
-- **Review commit:** `560e4312f609f57ac0b9ffe91cb04763f191514f`
+- **Review commit:** `00140a38fb4d7ec0da1f896d7f873bcc6b23aa0f`
 - **Source submitted in this PR:** `source/`
 - **Run tests:** `python -m pip install -r requirements-dev.txt && python -m pytest -q && python -m ruff check . && python -m mypy app`
 - **Run locally:** `python -m pip install -r requirements.txt && python -m uvicorn app.main:app --host 127.0.0.1 --port 8040`
-- **Deploy:** `docker build --build-arg ALPHALITMUS_COMMIT=560e4312f609f57ac0b9ffe91cb04763f191514f -t alpha-litmus .` followed by a hardened container run with `ALPHALITMUS_ENV=production`; the exact production controls are in `source/docs/VPS-DEPLOYMENT.md`.
+- **Deploy:** `docker build --build-arg ALPHALITMUS_COMMIT=00140a38fb4d7ec0da1f896d7f873bcc6b23aa0f -t alpha-litmus .` followed by a hardened container run with `ALPHALITMUS_ENV=production`; the exact production controls are in `source/docs/VPS-DEPLOYMENT.md`.
 - **Version binding:** The image is built from `git archive` of the review commit with the same commit passed as `ALPHALITMUS_COMMIT`. Both public health and same-origin proof expose it. The response also states that syntax is not independent build attestation.
 
 The deployed API exposes:
 
 ```json
-{"commit":"560e4312f609f57ac0b9ffe91cb04763f191514f","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"00140a38fb4d7ec0da1f896d7f873bcc6b23aa0f","commit_reviewable":true,"status":"ok","service":"alpha-litmus","no_execution":true,"provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ```json
-{"commit":"560e4312f609f57ac0b9ffe91cb04763f191514f","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
+{"commit":"00140a38fb4d7ec0da1f896d7f873bcc6b23aa0f","commit_reviewable":true,"schemaVersion":1,"slug":"alpha-litmus","provenance_basis":"syntax_only_not_authenticated"}
 ```
 
 ## Verification
